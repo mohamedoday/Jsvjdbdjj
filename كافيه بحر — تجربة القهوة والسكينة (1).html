@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>كافيه بحر | رواق القهوة والسكينة</title>
+
+  <!-- خطوط عربية مريحة للقراءة بعناوين وأسطر متزنة -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@500;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- مكتبة Tailwind CSS للترتيب والاستجابة السريعة -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: '#13110f',
+            surface: '#1c1815',
+            elevated: '#25201c',
+            ink: '#efe6d8',
+            muted: '#b8a894',
+            amber: '#d49456',
+            amberInk: '#14100d',
+          },
+          fontFamily: {
+            sans: ['IBM Plex Sans Arabic', 'Tajawal', 'sans-serif'],
+            display: ['Tajawal', 'IBM Plex Sans Arabic', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* =====================================================================
+       المستوى الأول: توكنز الألوان والمواد المعمارية المريحة للعين
+       مهندس ألوان وديكور بخبرة تتجاوز 30 عاماً — بدون أبيض حاد أو أسود مطلق
+       ===================================================================== */
+    :root {
+      --bg-base: #13110f;
+      --bg-surface: #1c1815;
+      --bg-elevated: #25201c;
+      --border-warm: rgba(235, 214, 185, 0.12);
+      --border-warm-strong: rgba(212, 148, 86, 0.36);
+      --text-primary: #efe6d8;
+      --text-muted: #b8a894;
+      --accent-amber: #d49456;
+      --accent-amber-soft: rgba(212, 148, 86, 0.16);
+      --accent-ink: #14100d;
+      --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-in-quick: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+      --dur-enter: 520ms;
+      --dur-exit: 340ms;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.7;
+      overflow-x: clip;
+    }
+
+    /* خلفية بديلة هادئة وثابتة في حال عدم توفر WebGPU أو تفعيل تقليل الحركة */
+    .ambient-fallback-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 68% 48% at 18% 14%, rgba(212, 148, 86, 0.08), transparent 70%),
+        radial-gradient(ellipse 62% 52% at 84% 78%, rgba(168, 126, 86, 0.06), transparent 72%),
+        linear-gradient(180deg, #13110f 0%, #171411 52%, #13110f 100%);
+    }
+
+    /* كانفاس مسار المؤشر الهالفتون عبر WebGPU خلف المحتوى */
+    #webgpu-halftone-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.72;
+    }
+
+    .app-foreground {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* تقييد عرض الأسطر لضمان راحة القراءة دون إجهاد بصري */
+    .measure-prose {
+      max-width: 62ch;
+    }
+
+    /* حلقات تركيز واضحة ومريحة لوصولية WCAG 2.2 */
+    :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+      outline: 2px solid var(--accent-amber);
+      outline-offset: 3px;
+      border-radius: 0.75rem;
+    }
+
+    /* حركة Ken Burns الهادئة للصور الفوتوغرافية */
+    @keyframes kenBurnsSlow {
+      0% {
+        transform: scale(1) translate3d(0, 0, 0);
+      }
+      50% {
+        transform: scale(1.06) translate3d(-1.2%, -0.8%, 0);
+      }
+      100% {
+        transform: scale(1) translate3d(0, 0, 0);
+      }
+    }
+
+    .ken-burns-media {
+      animation: kenBurnsSlow 26s var(--ease-out-smooth) infinite;
+      will-change: transform;
+    }
+
+    /* منظورات ثلاثية الأبعاد للبطاقات والتفاعل المائل بالماوس */
+    .tilt-stage {
+      perspective: 1150px;
+    }
+
+    .tilt-card {
+      transform-style: preserve-3d;
+      transform-origin: center center;
+      transition:
+        transform var(--dur-enter) var(--ease-out-smooth),
+        border-color 280ms var(--ease-out-smooth),
+        box-shadow 320ms var(--ease-out-smooth);
+    }
+
+    .tilt-card.is-tilting {
+      transition:
+        border-color 220ms var(--ease-out-smooth),
+        box-shadow 260ms var(--ease-out-smooth);
+      will-change: transform;
+    }
+
+    .tilt-depth-lift {
+      transform: translateZ(18px);
+    }
+
+    /* انتقالات الكشف عند التمرير عبر IntersectionObserver */
+    .reveal-item {
+      opacity: 0;
+      transform: translate3d(0, 22px, 0);
+      transition:
+        opacity 620ms var(--ease-out-smooth),
+        transform 680ms var(--ease-out-smooth);
+    }
+
+    .reveal-item.is-revealing {
+      will-change: opacity, transform;
+    }
+
+    .reveal-item.is-revealed {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* حركة انسيابية للنافذة المنبثقة والدرج الجانبي مع سرعة خروج أسرع بنسبة 25% */
+    .motion-modal-panel {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0) scale(0.985);
+      transition:
+        opacity var(--dur-exit) var(--ease-in-quick),
+        transform var(--dur-exit) var(--ease-in-quick);
+    }
+
+    .motion-modal-panel.is-open {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      transition:
+        opacity var(--dur-enter) var(--ease-out-smooth),
+        transform var(--dur-enter) var(--ease-out-smooth);
+      will-change: opacity, transform, filter;
+    }
+
+    .motion-modal-panel.is-closing {
+      opacity: 0;
+      transform: translate3d(0, 12px, 0) scale(0.982);
+      transition:
+        opacity var(--dur-exit) var(--ease-in-quick),
+        transform var(--dur-exit) var(--ease-in-quick);
+      will-change: opacity, transform, filter;
+    }
+
+    .motion-drawer-panel {
+      transform: translate3d(-100%, 0, 0);
+      transition: transform var(--dur-exit) var(--ease-in-quick);
+    }
+
+    .motion-drawer-panel.is-open {
+      transform: translate3d(0, 0, 0);
+      transition: transform var(--dur-enter) var(--ease-out-smooth);
+      will-change: transform, filter;
+    }
+
+    .motion-drawer-panel.is-closing {
+      transform: translate3d(-100%, 0, 0);
+      transition: transform var(--dur-exit) var(--ease-in-quick);
+      will-change: transform, filter;
+    }
+
+    /* ضغط لمسي متدرج للأزرار والعناصر التفاعلية في وضع الحركة الآمنة */
+    @media (prefers-reduced-motion: no-preference) {
+      html:not(.reduced-motion-mode) a[href^="#menu"]:active,
+      html:not(.reduced-motion-mode) #open-cart-btn:active,
+      html:not(.reduced-motion-mode) #hero-open-cart-btn:active,
+      html:not(.reduced-motion-mode) #confirm-add-to-cart-btn:active,
+      html:not(.reduced-motion-mode) #submit-order-btn:active,
+      html:not(.reduced-motion-mode) #booking-form button[type="submit"]:active,
+      html:not(.reduced-motion-mode) #new-order-btn:active {
+        transform: scale(0.97);
+        transition: transform 110ms var(--ease-out-smooth);
+      }
+
+      html:not(.reduced-motion-mode) [data-customize-id]:active,
+      html:not(.reduced-motion-mode) #cart-items-container > div:active {
+        transform: scale(0.98);
+        transition: transform 110ms var(--ease-out-smooth);
+      }
+
+      html:not(.reduced-motion-mode) .category-tab:active,
+      html:not(.reduced-motion-mode) #toggle-motion-btn:active,
+      html:not(.reduced-motion-mode) #close-customize-btn:active,
+      html:not(.reduced-motion-mode) #close-cart-btn:active,
+      html:not(.reduced-motion-mode) #clear-cart-btn:active,
+      html:not(.reduced-motion-mode) #size-options button:active,
+      html:not(.reduced-motion-mode) #milk-options button:active,
+      html:not(.reduced-motion-mode) #brew-options button:active,
+      html:not(.reduced-motion-mode) [data-inc-index]:active,
+      html:not(.reduced-motion-mode) [data-dec-index]:active,
+      html:not(.reduced-motion-mode) [data-remove-index]:active {
+        transform: scale(0.95);
+        transition: transform 100ms var(--ease-out-smooth);
+      }
+    }
+
+    /* =====================================================================
+       دعم متدرج لتفضيل تقليل الحركة (Tiered prefers-reduced-motion: reduce)
+      .tilt-card,
+      .motion-modal-panel,
+      .motion-drawer-panel {
+        transform: none !important;
+        filter: none !important;
+        transition: opacity 180ms ease-out, border-color 180ms ease-out, background-color 180ms ease-out !important;
+        will-change: auto;
+      }
+
+      .tilt-depth-lift {
+        transform: none !important;
+      }
+
+      /* المستوى 2: انتقال شفافية سريع بدون إزاحة مكانية */
+      .reveal-item {
+        opacity: 0;
+        transform: none !important;
+        transition: opacity 180ms ease-out !important;
+        will-change: auto;
+      }
+
+      .reveal-item.is-revealed {
+        opacity: 1;
+        transform: none !important;
+      }
+
+      #webgpu-halftone-canvas {
+        display: none !important;
+      }
+    }
+
+    /* فئة مساعدة لتفعيل وضع تقليل الحركة يدوياً أيضاً عند الرغبة */
+    html.reduced-motion-mode .ken-burns-media {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    html.reduced-motion-mode .tilt-card,
+    html.reduced-motion-mode .motion-modal-panel,
+    html.reduced-motion-mode .motion-drawer-panel {
+      transform: none !important;
+      filter: none !important;
+      transition: opacity 180ms ease-out, border-color 180ms ease-out !important;
+    }
+
+    html.reduced-motion-mode .reveal-item {
+      transform: none !important;
+      transition: opacity 180ms ease-out !important;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- مرشح SVG دقيق جداً لضبابية الحركة الموجهة حسب السرعة اللحظية -->
+  <svg
+    aria-hidden="true"
+    width="0"
+    height="0"
+    style="position:fixed;width:0;height:0;overflow:hidden;pointer-events:none;"
+  >
+    <defs>
+      <filter id="bahr-drawer-blur" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+        <feGaussianBlur id="bahr-drawer-blur-node" in="SourceGraphic" stdDeviation="0 0" />
+      </filter>
+      <filter id="bahr-modal-blur" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+        <feGaussianBlur id="bahr-modal-blur-node" in="SourceGraphic" stdDeviation="0 0" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- طبقة الإضاءة المحيطية الهادئة خلف المحتوى -->
+  <div class="ambient-fallback-layer" aria-hidden="true"></div>
+
+  <!-- كانفاس مسار المؤشر الهالفتون عبر WebGPU -->
+  <canvas id="webgpu-halftone-canvas" aria-hidden="true"></canvas>
+
+  <div class="app-foreground min-h-screen flex flex-col">
+    <!-- ===================================================================
+         الشريط العلوي للتنقل (الرواق، القائمة، التجربة، الحجز + زر السلة)
+         =================================================================== -->
+    <header
+      class="sticky top-0 z-30 border-b border-[rgba(235,214,185,0.12)] bg-[#13110f]/88 backdrop-blur-md"
+    >
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <!-- شعار كافيه بحر -->
+        <a
+          href="#gallery"
+          class="flex items-center gap-3 min-h-[44px] px-2 rounded-2xl text-ink hover:text-amber transition-colors"
+        >
+          <span
+            class="w-10 h-10 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.16)] flex items-center justify-center text-amber font-display font-extrabold text-lg"
+            aria-hidden="true"
+          >
+            ب
+          </span>
+          <div class="text-right">
+            <span class="block font-display font-bold text-lg leading-tight">كافيه بحر</span>
+            <span class="block text-xs text-muted">رواق القهوة والسكينة</span>
+          </div>
+        </a>
+
+        <!-- روابط الأقسام -->
+        <nav aria-label="التنقل الرئيسي" class="hidden md:flex items-center gap-2">
+          <a
+            href="#gallery"
+            class="min-h-[44px] px-4 inline-flex items-center rounded-2xl text-sm font-medium text-ink/90 hover:text-amber hover:bg-elevated/70 transition-colors"
+          >
+            الرواق
+          </a>
+          <a
+            href="#menu"
+            class="min-h-[44px] px-4 inline-flex items-center rounded-2xl text-sm font-medium text-ink/90 hover:text-amber hover:bg-elevated/70 transition-colors"
+          >
+            القائمة
+          </a>
+          <a
+            href="#experience"
+            class="min-h-[44px] px-4 inline-flex items-center rounded-2xl text-sm font-medium text-ink/90 hover:text-amber hover:bg-elevated/70 transition-colors"
+          >
+            التجربة
+          </a>
+          <a
+            href="#booking"
+            class="min-h-[44px] px-4 inline-flex items-center rounded-2xl text-sm font-medium text-ink/90 hover:text-amber hover:bg-elevated/70 transition-colors"
+          >
+            الحجز
+          </a>
+        </nav>
+
+        <!-- أزرار التحكم: تبديل راحة الحركة وفتح سلة الطلبات -->
+        <div class="flex items-center gap-2.5">
+          <button
+            id="toggle-motion-btn"
+            type="button"
+            aria-pressed="false"
+            class="min-h-[44px] px-3.5 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.14)] text-xs sm:text-sm text-muted hover:text-ink hover:border-[rgba(212,148,86,0.4)] transition-colors inline-flex items-center gap-2 cursor-pointer"
+            title="تبديل وضع الحركة الهادئة"
+          >
+            <span class="w-2 h-2 rounded-full bg-amber" aria-hidden="true"></span>
+            <span id="motion-status-label">حركة هادئة: 60fps</span>
+          </button>
+
+          <button
+            id="open-cart-btn"
+            type="button"
+            class="min-h-[44px] px-4 rounded-2xl bg-amber text-amberInk font-semibold text-sm hover:brightness-105 active:scale-[0.98] transition-all inline-flex items-center gap-2.5 cursor-pointer"
+            aria-label="فتح سلة الطلبات"
+          >
+            <span>سلة الطلبات</span>
+            <span
+              id="cart-count-badge"
+              class="min-w-[24px] h-6 px-2 rounded-full bg-amberInk text-ink text-xs font-bold inline-flex items-center justify-center"
+            >
+              0
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- شريط تنقل مختصر للهواتف -->
+      <nav
+        aria-label="روابط سريعة للهاتف"
+        class="flex md:hidden items-center justify-around border-t border-[rgba(235,214,185,0.08)] bg-surface/95 px-2 py-1.5"
+      >
+        <a href="#gallery" class="min-h-[40px] px-2.5 inline-flex items-center text-xs text-muted hover:text-ink">
+          الرواق
+        </a>
+        <a href="#menu" class="min-h-[40px] px-2.5 inline-flex items-center text-xs text-muted hover:text-ink">
+          القائمة
+        </a>
+        <a href="#experience" class="min-h-[40px] px-2.5 inline-flex items-center text-xs text-muted hover:text-ink">
+          التجربة
+        </a>
+        <a href="#booking" class="min-h-[40px] px-2.5 inline-flex items-center text-xs text-muted hover:text-ink">
+          الحجز
+        </a>
+      </nav>
+    </header>
+
+    <main class="flex-1">
+      <!-- =================================================================
+           قسم البطل (Hero): صورة فوتوغرافية بحركة Ken Burns وتدرج داكن مريح
+           ================================================================= -->
+      <section id="gallery" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
+        <div class="relative rounded-3xl overflow-hidden bg-surface border border-[rgba(235,214,185,0.12)]">
+          <div class="relative h-[440px] sm:h-[520px] w-full overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1600&q=80"
+              alt="كوب قهوة دافئ على طاولة خشبية هادئة في كافيه بحر"
+              class="ken-burns-media w-full h-full object-cover"
+              onerror="this.onerror=null;this.src='https://placehold.co/1600x900/1c1815/efe6d8?text=%D9%83%D8%A7%D9%81%D9%8A%D9%87+%D8%A8%D8%AD%D8%B1';"
+            />
+            <!-- تدرج داكن مدروس لضمان وضوح النص وراحة العين -->
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-[#13110f] via-[#13110f]/70 to-[#13110f]/25"
+              aria-hidden="true"
+            ></div>
+          </div>
+
+          <div class="relative sm:absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
+            <div class="max-w-2xl space-y-4">
+              <p class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-amber tracking-wide">
+                <span>إضاءة شفق دافئة</span>
+                <span aria-hidden="true">•</span>
+                <span>خشب رملي مصقول</span>
+                <span aria-hidden="true">•</span>
+                <span>تحميص متوازن</span>
+              </p>
+
+              <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
+                مساحة هادئة للقهوة والتأمل البعيد عن ضجيج الشاشات
+              </h1>
+
+              <p class="measure-prose text-base sm:text-lg text-ink/85 leading-relaxed">
+                صممنا زوايا كافيه بحر بألوان دافئة متدرجة تحمي العين وتمنح الحواس طمأنينة المساء، مع
+                مشروبات مختصة قابلة للتخصيص حسب ذائقتك لحظة بلحظة.
+              </p>
+
+              <div class="pt-2 flex flex-wrap items-center gap-3">
+                <a
+                  href="#menu"
+                  class="min-h-[44px] px-6 rounded-2xl bg-amber text-amberInk font-semibold text-sm sm:text-base hover:brightness-105 active:scale-[0.98] transition-all inline-flex items-center justify-center"
+                >
+                  استكشف القائمة وخصص مشروبك
+                </a>
+
+                <button
+                  id="hero-open-cart-btn"
+                  type="button"
+                  class="min-h-[44px] px-6 rounded-2xl bg-elevated/95 border border-[rgba(235,214,185,0.18)] text-ink font-medium text-sm sm:text-base hover:border-[rgba(212,148,86,0.45)] transition-colors inline-flex items-center justify-center cursor-pointer"
+                >
+                  فتح سلة الطلبات
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           قسم القائمة التفاعلية وتخصيص المشروبات
+           ================================================================= -->
+      <section id="menu" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 border-t border-[rgba(235,214,185,0.08)]">
+        <div class="reveal-item flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div class="space-y-2">
+            <span class="text-xs sm:text-sm font-semibold text-amber">القائمة اليومية</span>
+            <h2 class="font-display font-bold text-2xl sm:text-3xl text-ink">
+              مشروبات ومخبوزات تُعدّ بتأنٍ
+            </h2>
+            <p class="measure-prose text-sm sm:text-base text-muted">
+              اختر التصنيف المناسب ثم اضغط «تخصيص وإضافة» لتحديد الحجم، القاعدة، درجة الحرارة، وملاحظاتك الخاصة.
+            </p>
+          </div>
+
+          <!-- تبويبات تصفية الفئات -->
+          <div
+            role="tablist"
+            aria-label="تصنيفات القائمة"
+            class="flex flex-wrap gap-2"
+            id="category-tabs"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-category="all"
+              class="category-tab min-h-[44px] px-4 rounded-2xl text-sm font-semibold bg-amber text-amberInk transition-colors cursor-pointer"
+            >
+              الكل
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-category="espresso"
+              class="category-tab min-h-[44px] px-4 rounded-2xl text-sm font-medium bg-elevated text-ink/85 border border-[rgba(235,214,185,0.12)] hover:border-[rgba(212,148,86,0.4)] transition-colors cursor-pointer"
+            >
+              إسبرسو ومقطر
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-category="signature"
+              class="category-tab min-h-[44px] px-4 rounded-2xl text-sm font-medium bg-elevated text-ink/85 border border-[rgba(235,214,185,0.12)] hover:border-[rgba(212,148,86,0.4)] transition-colors cursor-pointer"
+            >
+              مشروبات بحر الخاصة
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-category="bakery"
+              class="category-tab min-h-[44px] px-4 rounded-2xl text-sm font-medium bg-elevated text-ink/85 border border-[rgba(235,214,185,0.12)] hover:border-[rgba(212,148,86,0.4)] transition-colors cursor-pointer"
+            >
+              مخبوزات دافئة
+            </button>
+          </div>
+        </div>
+
+        <!-- شبكة بطاقات القائمة مع حركة ميل ثلاثية الأبعاد عبر RAF -->
+        <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+
+      <!-- =================================================================
+           قسم التجربة المعمارية واللونية (30+ عاماً من الخبرة)
+           ================================================================= -->
+      <section id="experience" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 border-t border-[rgba(235,214,185,0.08)]">
+        <div class="reveal-item space-y-2 mb-10">
+          <span class="text-xs sm:text-sm font-semibold text-amber">فلسفة المكان</span>
+          <h2 class="font-display font-bold text-2xl sm:text-3xl text-ink">
+            تناغم الألوان والضوء والملمس لراحة حقيقية
+          </h2>
+          <p class="measure-prose text-sm sm:text-base text-muted">
+            كل سطح ودرجة لون مختارة بعناية لتقليل الإجهاد البصري ومنحك إحساساً بالدفء والانتماء في كل زيارة.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <article class="reveal-item rounded-3xl bg-surface border border-[rgba(235,214,185,0.12)] p-6 space-y-3">
+            <div class="w-11 h-11 rounded-2xl bg-elevated flex items-center justify-center text-amber font-bold">
+              01
+            </div>
+            <h3 class="font-display font-bold text-lg text-ink">راحة العين بلا وهج قاسٍ</h3>
+            <p class="text-sm text-muted leading-relaxed">
+              نعتمد درجات إسبرسو داكنة وكريمية دافئة بدلاً من التباين الصارخ، مما يحافظ على وضوح القراءة لفترات طويلة.
+            </p>
+          </article>
+
+          <article class="reveal-item rounded-3xl bg-surface border border-[rgba(235,214,185,0.12)] p-6 space-y-3">
+            <div class="w-11 h-11 rounded-2xl bg-elevated flex items-center justify-center text-amber font-bold">
+              02
+            </div>
+            <h3 class="font-display font-bold text-lg text-ink">إيقاع حركة متوازن وأنيق</h3>
+            <p class="text-sm text-muted leading-relaxed">
+              تتحرك العناصر بانسيابية مضبوطة مع احترام تام لخيار تقليل الحركة، لتبقى التجربة سلسة على جميع الأجهزة.
+            </p>
+          </article>
+
+          <article class="reveal-item rounded-3xl bg-surface border border-[rgba(235,214,185,0.12)] p-6 space-y-3">
+            <div class="w-11 h-11 rounded-2xl bg-elevated flex items-center justify-center text-amber font-bold">
+              03
+            </div>
+            <h3 class="font-display font-bold text-lg text-ink">دفء المواد الطبيعية</h3>
+            <p class="text-sm text-muted leading-relaxed">
+              يستحضر التصميم ملمس الخشب المدخن والرمال الساحلية مع إضاءة كهرمانية واحدة تبرز التفاصيل دون ازدحام.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- =================================================================
+           قسم الحجز والزيارة
+           ================================================================= -->
+      <section id="booking" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14 border-t border-[rgba(235,214,185,0.08)]">
+        <div class="reveal-item rounded-3xl bg-surface border border-[rgba(235,214,185,0.12)] p-6 sm:p-10">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-6 space-y-4">
+              <span class="text-xs sm:text-sm font-semibold text-amber">حجز طاولة أو جلسة هادئة</span>
+              <h2 class="font-display font-bold text-2xl sm:text-3xl text-ink">
+                احجز ركنك المفضل في كافيه بحر
+              </h2>
+              <p class="measure-prose text-sm sm:text-base text-muted">
+                سواء كنت تبحث عن ركن هادئ للقراءة أو جلسة مسائية مع الأصدقاء، نُجهّز طاولتك مسبقاً وفق موعدك.
+              </p>
+              <div class="text-sm text-ink/85 space-y-1.5 pt-1">
+                <p>ساعات الاستقبال: يومياً من 8:00 صباحاً حتى 12:30 منتصف الليل</p>
+                <p>الموقع: كورنيش الرواق البحري — الطابق الأرضي</p>
+              </div>
+            </div>
+
+            <form id="booking-form" class="lg:col-span-6 space-y-4" novalidate>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="guest-name" class="block text-sm font-medium text-ink mb-1.5">
+                    الاسم الكامل
+                  </label>
+                  <input
+                    id="guest-name"
+                    name="guestName"
+                    type="text"
+                    required
+                    placeholder="مثال: نور الهدى"
+                    class="w-full min-h-[44px] px-4 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.14)] text-ink placeholder:text-muted/60 text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label for="guest-count" class="block text-sm font-medium text-ink mb-1.5">
+                    عدد الضيوف
+                  </label>
+                  <select
+                    id="guest-count"
+                    name="guestCount"
+                    class="w-full min-h-[44px] px-4 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.14)] text-ink text-sm"
+                  >
+                    <option value="1 ضيف (ركن هادئ)">1 ضيف (ركن هادئ)</option>
+                    <option value="2 ضيوف" selected>2 ضيوف</option>
+                    <option value="3 - 4 ضيوف">3 - 4 ضيوف</option>
+                    <option value="5 - 6 ضيوف">5 - 6 ضيوف</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="booking-date" class="block text-sm font-medium text-ink mb-1.5">
+                    اليوم
+                  </label>
+                  <input
+                    id="booking-date"
+                    name="bookingDate"
+                    type="date"
+                    required
+                    class="w-full min-h-[44px] px-4 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.14)] text-ink text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label for="booking-time" class="block text-sm font-medium text-ink mb-1.5">
+                    الفترة الزمنية
+                  </label>
+                  <select
+                    id="booking-time"
+                    name="bookingTime"
+                    class="w-full min-h-[44px] px-4 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.14)] text-ink text-sm"
+                  >
+                    <option value="الصباح الباكر (09:00)">الصباح الباكر (09:00)</option>
+                    <option value="بعد الظهيرة (16:30)">بعد الظهيرة (16:30)</option>
+                    <option value="المساء الدافئ (20:00)" selected>المساء الدافئ (20:00)</option>
+                    <option value="السهرة الهادئة (22:15)">السهرة الهادئة (22:15)</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="min-h-[44px] px-6 rounded-2xl bg-amber text-amberInk font-semibold text-sm hover:brightness-105 transition-all cursor-pointer"
+              >
+                تأكيد طلب الحجز
+              </button>
+
+              <div
+                id="booking-feedback"
+                role="status"
+                aria-live="polite"
+                class="hidden rounded-2xl bg-elevated border border-[rgba(212,148,86,0.35)] px-4 py-3 text-sm text-ink"
+              ></div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- الفوتر -->
+    <footer class="border-t border-[rgba(235,214,185,0.1)] bg-surface py-8">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted">
+        <p>كافيه بحر — جميع الحقوق محفوظة</p>
+        <p>تجربة ويب مريحة للعين ومتوافقة مع معايير الوصولية والحركة الهادئة</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- =====================================================================
+       نافذة تخصيص المشروب وإضافته إلى السلة
+       ===================================================================== -->
+  <div
+    id="customize-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="customize-modal-title"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#0d0b09]/80 backdrop-blur-sm"
+  >
+    <div id="customize-modal-panel" class="motion-modal-panel w-full max-w-lg rounded-3xl bg-elevated border border-[rgba(235,214,185,0.16)] p-6 sm:p-7 space-y-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <span class="text-xs font-semibold text-amber">تخصيص المشروب</span>
+          <h3 id="customize-modal-title" class="font-display font-bold text-xl text-ink mt-0.5"></h3>
+          <p id="customize-item-subtitle" class="text-sm text-muted mt-1"></p>
+        </div>
+        <button
+          id="close-customize-btn"
+          type="button"
+          aria-label="إغلاق نافذة التخصيص"
+          class="min-w-[44px] min-h-[44px] rounded-2xl bg-surface border border-[rgba(235,214,185,0.12)] text-ink hover:border-[rgba(212,148,86,0.4)] inline-flex items-center justify-center cursor-pointer"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- اختيار الحجم -->
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-semibold text-ink">الحجم</legend>
+        <div id="size-options" class="grid grid-cols-3 gap-2.5"></div>
+      </fieldset>
+
+      <!-- اختيار الحليب أو القاعدة -->
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-semibold text-ink">القاعدة / الحليب</legend>
+        <div id="milk-options" class="grid grid-cols-2 gap-2.5"></div>
+      </fieldset>
+
+      <!-- اختيار درجة الحرارة أو التحضير -->
+      <fieldset class="space-y-2">
+        <legend class="text-sm font-semibold text-ink">درجة الحرارة / أسلوب التحضير</legend>
+        <div id="brew-options" class="grid grid-cols-3 gap-2.5"></div>
+      </fieldset>
+
+      <!-- ملاحظات إضافية -->
+      <div>
+        <label for="custom-notes-input" class="block text-sm font-semibold text-ink mb-1.5">
+          ملاحظات التحضير (اختياري)
+        </label>
+        <input
+          id="custom-notes-input"
+          type="text"
+          maxlength="120"
+          placeholder="مثال: سكر خفيف، حليب دافئ جداً..."
+          class="w-full min-h-[44px] px-4 rounded-2xl bg-surface border border-[rgba(235,214,185,0.14)] text-ink placeholder:text-muted/60 text-sm"
+        />
+      </div>
+
+      <!-- السعر المباشر وزر الإضافة -->
+      <div class="pt-2 border-t border-[rgba(235,214,185,0.1)] flex items-center justify-between gap-4">
+        <div>
+          <span class="block text-xs text-muted">السعر المقدر</span>
+          <span id="customize-live-price" class="font-display font-bold text-xl text-amber"></span>
+        </div>
+
+        <button
+          id="confirm-add-to-cart-btn"
+          type="button"
+          class="min-h-[44px] px-6 rounded-2xl bg-amber text-amberInk font-semibold text-sm hover:brightness-105 transition-all cursor-pointer"
+        >
+          إضافة إلى السلة
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       درج سلة الطلبات الجانبي (Slide-over Cart Drawer)
+       ===================================================================== -->
+  <div
+    id="cart-drawer-backdrop"
+    class="fixed inset-0 z-40 hidden bg-[#0d0b09]/75 backdrop-blur-xs"
+    aria-hidden="true"
+  ></div>
+
+  <aside
+    id="cart-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="cart-drawer-title"
+    class="motion-drawer-panel fixed top-0 bottom-0 left-0 z-50 w-full max-w-md bg-elevated border-r border-[rgba(235,214,185,0.14)] flex flex-col"
+  >
+    <div class="p-5 sm:p-6 border-b border-[rgba(235,214,185,0.12)] flex items-center justify-between gap-3">
+      <div>
+        <h2 id="cart-drawer-title" class="font-display font-bold text-xl text-ink">سلة الطلبات</h2>
+        <p class="text-xs text-muted mt-0.5">إعداد طازج داخل رواق كافيه بحر</p>
+      </div>
+      <button
+        id="close-cart-btn"
+        type="button"
+        aria-label="إغلاق سلة الطلبات"
+        class="min-w-[44px] min-h-[44px] rounded-2xl bg-surface border border-[rgba(235,214,185,0.12)] text-ink hover:border-[rgba(212,148,86,0.4)] inline-flex items-center justify-center cursor-pointer"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- قائمة العناصر في السلة -->
+    <div id="cart-items-container" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4"></div>
+
+    <!-- ملخص الحساب وإرسال الطلب -->
+    <div class="p-5 sm:p-6 border-t border-[rgba(235,214,185,0.12)] bg-surface/80 space-y-4">
+      <div
+        id="order-confirmation-banner"
+        role="status"
+        aria-live="polite"
+        class="hidden rounded-2xl bg-elevated border border-[rgba(212,148,86,0.45)] p-4 space-y-3"
+      >
+        <p class="text-sm font-semibold text-amber">تم استلام طلبك بنجاح</p>
+        <p id="order-confirmation-details" class="text-xs sm:text-sm text-ink/90 leading-relaxed"></p>
+        <button
+          id="new-order-btn"
+          type="button"
+          class="min-h-[40px] px-4 rounded-xl bg-amber text-amberInk text-xs font-bold cursor-pointer"
+        >
+          بدء طلب جديد
+        </button>
+      </div>
+
+      <div id="cart-summary-block" class="space-y-2 text-sm">
+        <div class="flex items-center justify-between text-muted">
+          <span>المجموع الفرعي</span>
+          <span id="cart-subtotal" class="text-ink font-medium">0 د.ع</span>
+        </div>
+        <div class="flex items-center justify-between text-muted">
+          <span>التحضير والضيافة</span>
+          <span id="cart-service-fee" class="text-ink font-medium">0 د.ع</span>
+        </div>
+        <div class="pt-2 border-t border-[rgba(235,214,185,0.1)] flex items-center justify-between text-base font-bold">
+          <span class="text-ink">الإجمالي</span>
+          <span id="cart-total" class="text-amber font-display">0 د.ع</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button
+          id="clear-cart-btn"
+          type="button"
+          class="min-h-[44px] px-4 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.14)] text-sm text-muted hover:text-ink transition-colors cursor-pointer"
+        >
+          تفريغ السلة
+        </button>
+
+        <button
+          id="submit-order-btn"
+          type="button"
+          class="flex-1 min-h-[44px] px-5 rounded-2xl bg-amber text-amberInk font-semibold text-sm hover:brightness-105 transition-all cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed"
+        >
+          تأكيد الطلب الآن
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =====================================================================
+       البرمجيات المعمارية للتطبيق (الحالة، التخصيص، السلة، 60fps، WebGPU)
+       ===================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* -------------------------------------------------------------------
+         1. بيانات القائمة باللغة العربية مع صور فوتوغرافية حقيقية وأسعار د.ع
+         ------------------------------------------------------------------- */
+      const MENU_ITEMS = [
+        {
+          id: 'bahr-espresso',
+          name: 'إسبرسو رواق بحر',
+          category: 'espresso',
+          basePrice: 4500,
+          origin: 'إثيوبيا — ييرغاتشيف',
+          notes: 'إيحاءات الكاكاو الدافئ والتين المجفف بقوام متوازن.',
+          image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=900&q=80',
+          fallback: 'https://placehold.co/900x600/1c1815/efe6d8?text=%D8%A5%D8%B3%D8%A8%D8%B1%D9%8A%D8%B3%D9%88+%D8%A8%D8%AD%D8%B1',
+        },
+        {
+          id: 'coastal-v60',
+          name: 'قهوة مقطرة V60 — نسيم الشفق',
+          category: 'espresso',
+          basePrice: 6500,
+          origin: 'كولومبيا — هويلا',
+          notes: 'نقاء عالٍ مع لمسة كراميل خفيفة وحموضة فاكهية لطيفة.',
+          image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80',
+          fallback: 'https://placehold.co/900x600/1c1815/efe6d8?text=V60+%D9%86%D8%B3%D9%8A%D9%85+%D8%A7%D9%84%D8%B4%D9%81%D9%82',
+        },
+        {
+          id: 'amber-cortado',
+          name: 'كورتادو الكهرمان الرملي',
+          category: 'signature',
+          basePrice: 6000,
+          origin: 'البرازيل + إثيوبيا',
+          notes: 'توازن دقيق بين الإسبيرسو المركز والحليب المخملي الدافئ.',
+          image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=900&q=80',
+          fallback: 'https://placehold.co/900x600/1c1815/efe6d8?text=%D9%83%D9%88%D8%B1%D8%AA%D8%A7%D8%AF%D9%88+%D8%A7%D9%84%D9%83%D9%87%D8%B1%D9%85%D8%A7%D9%86',
+        },
+        {
+          id: 'smoked-cardamom-latte',
+          name: 'لاتيه الهيل والخشب المدخن',
+          category: 'signature',
+          basePrice: 7000,
+          origin: 'غواتيمالا — أنتيغوا',
+          notes: 'دفء الهيل العطري مع نعومة الحليب ولمسة فانيلا طبيعية.',
+          image: 'https://images.unsplash.com/photo-1541167760496-0c8aa3b9284b?auto=format&fit=crop&w=900&q=80',
+          fallback: 'https://placehold.co/900x600/1c1815/efe6d8?text=%D9%84%D8%A7%D8%AA%D9%8A%D9%87+%D8%A7%D9%84%D9%87%D9%8A%D9%84',
+        },
+        {
+          id: 'warm-brioche',
+          name: 'بريوش الزبدة والسمسم المحمص',
+          category: 'bakery',
+          basePrice: 5000,
+          origin: 'مخبز كافيه بحر الصباحي',
+          notes: 'عجينة هشة مخبوزة بحرارة هادئة تناسب القهوة السوداء والمقطرة.',
+          image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80',
+          fallback: 'https://placehold.co/900x600/1c1815/efe6d8?text=%D8%A8%D8%B1%D9%8A%D9%88%D8%B4+%D8%AF%D8%A7%D9%81%D8%A6',
+        },
+        {
+          id: 'date-pecan-tart',
+          name: 'تارت التمر وجوز البقان',
+          category: 'bakery',
+          basePrice: 6500,
+          origin: 'وصفة الرواق المسائية',
+          notes: 'حلاوة تمر متزنة مع قرمشة البقان المحمص دون إفراط في السكر.',
+          image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=900&q=80',
+          fallback: 'https://placehold.co/900x600/1c1815/efe6d8?text=%D8%AA%D8%A7%D8%B1%D8%AA+%D8%A7%D9%84%D8%AA%D9%85%D8%B1',
+        },
+      ];
+
+      const SIZE_OPTIONS = [
+        { label: 'صغير', extra: 0 },
+        { label: 'وسط', extra: 1000 },
+        { label: 'كبير', extra: 2000 },
+      ];
+
+      const MILK_OPTIONS = [
+        { label: 'كامل الدسم', extra: 0 },
+        { label: 'شوفان', extra: 1000 },
+        { label: 'لوز', extra: 1000 },
+        { label: 'بدون حليب', extra: 0 },
+      ];
+
+      const BREW_OPTIONS = [
+        { label: 'ساخن', extra: 0 },
+        { label: 'مثلج', extra: 500 },
+        { label: 'تقطير بطيء', extra: 1000 },
+      ];
+
+      const SERVICE_FEE_PER_ORDER = 1000;
+
+      /* -------------------------------------------------------------------
+         2. حالة التطبيق الموحدة
+         ------------------------------------------------------------------- */
+      const state = {
+        activeCategory: 'all',
+        cart: [],
+        customizingItem: null,
+        draftConfig: {
+          size: SIZE_OPTIONS[1],
+          milk: MILK_OPTIONS[0],
+          brew: BREW_OPTIONS[0],
+          notes: '',
+        },
+        manualReducedMotion: false,
+        lastFocusedElement: null,
+      };
+
+      const systemPrefersReducedMotion = () =>
+        window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const isReducedMotionActive = () =>
+        state.manualReducedMotion || systemPrefersReducedMotion();
+
+      function formatIQD(amount) {
+        return `${Number(amount).toLocaleString('ar-IQ')} د.ع`;
+      }
+
+      /* -------------------------------------------------------------------
+         2.5 محرك ضبابية الحركة الموجهة حسب السرعة اللحظية (SVG feGaussianBlur)
+         حد أقصى 2.5px ويعود إلى 0px تلقائياً عند السكون أو تقليل الحركة
+         ------------------------------------------------------------------- */
+      const drawerBlurNode = document.getElementById('bahr-drawer-blur-node');
+      const modalBlurNode = document.getElementById('bahr-modal-blur-node');
+      const customizeModalPanel = document.getElementById('customize-modal-panel');
+
+      const blurTrackers = [];
+
+      function createVelocityBlurTracker(element, filterId, blurPrimitive, maxStdX, maxStdY) {
+        let lastX = null;
+        let lastY = null;
+        let lastTime = 0;
+        let stdX = 0;
+        let stdY = 0;
+        let rafId = null;
+
+        function clearBlurImmediate() {
+          stdX = 0;
+          stdY = 0;
+          lastX = null;
+          lastY = null;
+          if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+          if (blurPrimitive) {
+            blurPrimitive.setAttribute('stdDeviation', '0 0');
+          }
+          if (element) {
+            element.style.filter = 'none';
+          }
+        }
+
+        function stepDecay() {
+          rafId = null;
+          if (isReducedMotionActive()) {
+            clearBlurImmediate();
+            return;
+          }
+
+          // تخفيف الضبابية بسلاسة عند تلاشي السرعة أو انتهاء الحركة
+          stdX *= 0.72;
+          stdY *= 0.72;
+
+          if (stdX < 0.04 && stdY < 0.04) {
+            stdX = 0;
+            stdY = 0;
+            if (blurPrimitive) {
+              blurPrimitive.setAttribute('stdDeviation', '0 0');
+            }
+            if (element) {
+              element.style.filter = 'none';
+            }
+            return;
+          }
+
+          const clampedX = Math.min(maxStdX, Math.max(0, stdX));
+          const clampedY = Math.min(maxStdY, Math.max(0, stdY));
+
+          if (blurPrimitive) {
+            blurPrimitive.setAttribute('stdDeviation', `${clampedX.toFixed(2)} ${clampedY.toFixed(2)}`);
+          }
+          if (element) {
+            element.style.filter = `url(#${filterId})`;
+          }
+
+          rafId = requestAnimationFrame(stepDecay);
+        }
+
+        function impulse(vxPxPerMs, vyPxPerMs) {
+          if (isReducedMotionActive() || !element || !blurPrimitive) return;
+
+          const speedX = Math.abs(vxPxPerMs) * 1.45;
+          const speedY = Math.abs(vyPxPerMs) * 1.45;
+
+          stdX = Math.min(maxStdX, Math.max(stdX, speedX));
+          stdY = Math.min(maxStdY, Math.max(stdY, speedY));
+
+          if (stdX > 0.05 || stdY > 0.05) {
+            blurPrimitive.setAttribute('stdDeviation', `${stdX.toFixed(2)} ${stdY.toFixed(2)}`);
+            element.style.filter = `url(#${filterId})`;
+            if (rafId === null) {
+              rafId = requestAnimationFrame(stepDecay);
+            }
+          }
+        }
+
+        function pulseDirectional(dx, dy, durationMs) {
+          if (isReducedMotionActive() || !element || !blurPrimitive) return;
+          const normFactor = Math.max(0.25, durationMs / 340);
+          const bx = Math.min(maxStdX, (Math.abs(dx) / 140) * normFactor);
+          const by = Math.min(maxStdY, (Math.abs(dy) / 140) * normFactor);
+          stdX = Math.max(stdX, bx);
+          stdY = Math.max(stdY, by);
+
+          blurPrimitive.setAttribute('stdDeviation', `${stdX.toFixed(2)} ${stdY.toFixed(2)}`);
+          element.style.filter = `url(#${filterId})`;
+
+          if (rafId === null) {
+            rafId = requestAnimationFrame(stepDecay);
+          }
+        }
+
+        function trackPointer(clientX, clientY) {
+          if (isReducedMotionActive()) return;
+          const now = performance.now();
+          if (lastX !== null && lastY !== null && lastTime > 0) {
+            const dt = Math.max(1, now - lastTime);
+            const vx = (clientX - lastX) / dt;
+            const vy = (clientY - lastY) / dt;
+            impulse(vx, vy);
+          }
+          lastX = clientX;
+          lastY = clientY;
+          lastTime = now;
+        }
+
+        function resetPointerSample() {
+          lastX = null;
+          lastY = null;
+        }
+
+        const tracker = {
+          impulse,
+          pulseDirectional,
+          trackPointer,
+          resetPointerSample,
+          clearBlurImmediate,
+        };
+        blurTrackers.push(tracker);
+        return tracker;
+      }
+
+      /* -------------------------------------------------------------------
+         3. بناء القائمة وتفاعل الميل ثلاثي الأبعاد (RAF بدون layout thrashing)
+         ------------------------------------------------------------------- */
+      const menuGridEl = document.getElementById('menu-grid');
+      const tiltControllers = [];
+
+      function bindCardTilt3D(cardEl) {
+        let rafId = null;
+        let currentRx = 0;
+        let currentRy = 0;
+        let targetRx = 0;
+        let targetRy = 0;
+        let active = false;
+
+        function stepTilt() {
+          if (isReducedMotionActive()) {
+            rafId = null;
+            currentRx = 0;
+            currentRy = 0;
+            targetRx = 0;
+            targetRy = 0;
+            cardEl.style.transform = '';
+            return;
+          }
+
+          // تخميد سلس للسرعة والزاوية نحو الهدف أو نحو الصفر عند المغادرة
+          const damping = active ? 0.16 : 0.13;
+          currentRx += (targetRx - currentRx) * damping;
+          currentRy += (targetRy - currentRy) * damping;
+
+          const settled =
+            !active &&
+            Math.abs(currentRx) < 0.04 &&
+            Math.abs(currentRy) < 0.04;
+
+          if (settled) {
+            currentRx = 0;
+            currentRy = 0;
+            cardEl.style.transform = '';
+            cardEl.classList.remove('is-tilting');
+            rafId = null;
+            return;
+          }
+
+          cardEl.style.transform = `rotateX(${currentRx.toFixed(2)}deg) rotateY(${currentRy.toFixed(2)}deg)`;
+          rafId = requestAnimationFrame(stepTilt);
+        }
+
+        function onPointerMove(e) {
+          if (e.pointerType !== 'mouse' || isReducedMotionActive()) return;
+          const rect = cardEl.getBoundingClientRect();
+          if (rect.width === 0 || rect.height === 0) return;
+
+          const normX = (e.clientX - rect.left) / rect.width - 0.5;
+          const normY = (e.clientY - rect.top) / rect.height - 0.5;
+
+          // ميل ثلاثي الأبعاد ناعم ومريح للعين (حد أقصى 6 درجات)
+          targetRy = normX * 11;
+          targetRx = -normY * 9;
+          active = true;
+          cardEl.classList.add('is-tilting');
+
+          if (rafId === null) {
+            rafId = requestAnimationFrame(stepTilt);
+          }
+        }
+
+        function onPointerLeave() {
+          active = false;
+          targetRx = 0;
+          targetRy = 0;
+          if (rafId === null && (Math.abs(currentRx) > 0.02 || Math.abs(currentRy) > 0.02)) {
+            rafId = requestAnimationFrame(stepTilt);
+          } else if (rafId === null) {
+            cardEl.classList.remove('is-tilting');
+            cardEl.style.transform = '';
+          }
+        }
+
+        cardEl.addEventListener('pointermove', onPointerMove, { passive: true });
+        cardEl.addEventListener('pointerleave', onPointerLeave, { passive: true });
+
+        tiltControllers.push({
+          reset() {
+            active = false;
+            targetRx = 0;
+            targetRy = 0;
+            currentRx = 0;
+            currentRy = 0;
+            if (rafId !== null) {
+              cancelAnimationFrame(rafId);
+              rafId = null;
+            }
+            cardEl.classList.remove('is-tilting');
+            cardEl.style.transform = '';
+          },
+        });
+      }
+
+      function renderMenu() {
+        const filtered =
+          state.activeCategory === 'all'
+            ? MENU_ITEMS
+            : MENU_ITEMS.filter((item) => item.category === state.activeCategory);
+
+        menuGridEl.innerHTML = '';
+
+        filtered.forEach((item) => {
+          const stage = document.createElement('div');
+          stage.className = 'tilt-stage reveal-item';
+
+          const article = document.createElement('article');
+          article.className =
+            'tilt-card h-full rounded-3xl bg-surface border border-[rgba(235,214,185,0.12)] hover:border-[rgba(212,148,86,0.38)] overflow-hidden flex flex-col justify-between';
+
+          article.innerHTML = `
+            <div>
+              <div class="relative h-48 w-full overflow-hidden bg-elevated">
+                <img
+                  src="${item.image}"
+                  alt="${item.name}"
+                  loading="lazy"
+                  class="w-full h-full object-cover"
+                  onerror="this.onerror=null;this.src='${item.fallback}';"
+                />
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-surface/90 via-transparent to-transparent"
+                  aria-hidden="true"
+                ></div>
+                <span class="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-elevated/90 border border-[rgba(235,214,185,0.14)] text-xs text-ink/90">
+                  ${item.origin}
+                </span>
+              </div>
+
+              <div class="p-5 space-y-2.5">
+                <div class="flex items-start justify-between gap-3">
+                  <h3 class="font-display font-bold text-lg text-ink leading-snug">${item.name}</h3>
+                  <span class="font-display font-bold text-base text-amber shrink-0">${formatIQD(item.basePrice)}</span>
+                </div>
+                <p class="text-sm text-muted leading-relaxed">${item.notes}</p>
+              </div>
+            </div>
+
+            <div class="px-5 pb-5 pt-2 tilt-depth-lift">
+              <button
+                type="button"
+                data-customize-id="${item.id}"
+                class="w-full min-h-[44px] px-4 rounded-2xl bg-elevated border border-[rgba(235,214,185,0.16)] text-ink font-semibold text-sm hover:bg-amber hover:text-amberInk hover:border-amber transition-colors cursor-pointer"
+              >
+                تخصيص وإضافة
+              </button>
+            </div>
+          `;
+
+          const customizeBtn = article.querySelector('[data-customize-id]');
+          customizeBtn.addEventListener('click', (e) => {
+            openCustomizeModal(item, e.currentTarget);
+          });
+
+          bindCardTilt3D(article);
+          stage.appendChild(article);
+          menuGridEl.appendChild(stage);
+        });
+
+        observeRevealElements();
+      }
+
+      /* -------------------------------------------------------------------
+         4. نافذة تخصيص المشروب وإضافته إلى السلة
+         ------------------------------------------------------------------- */
+      const customizeModal = document.getElementById('customize-modal');
+      const customizeTitleEl = document.getElementById('customize-modal-title');
+      const customizeSubtitleEl = document.getElementById('customize-item-subtitle');
+      const sizeOptionsEl = document.getElementById('size-options');
+      const milkOptionsEl = document.getElementById('milk-options');
+      const brewOptionsEl = document.getElementById('brew-options');
+      const customNotesInput = document.getElementById('custom-notes-input');
+      const customizeLivePriceEl = document.getElementById('customize-live-price');
+      const confirmAddBtn = document.getElementById('confirm-add-to-cart-btn');
+      const closeCustomizeBtn = document.getElementById('close-customize-btn');
+      const modalBlurTracker = createVelocityBlurTracker(
+        customizeModalPanel,
+        'bahr-modal-blur',
+        modalBlurNode,
+        1.4,
+        1.8
+      );
+      let modalCloseTimer = null;
+
+      customizeModalPanel.addEventListener(
+        'pointermove',
+        (e) => {
+          if (e.pointerType === 'mouse') {
+            modalBlurTracker.trackPointer(e.clientX, e.clientY);
+          }
+        },
+        { passive: true }
+      );
+      customizeModalPanel.addEventListener('pointerleave', () => modalBlurTracker.resetPointerSample(), {
+        passive: true,
+      });
+
+      function computeDraftPrice() {
+        if (!state.customizingItem) return 0;
+        return (
+          state.customizingItem.basePrice +
+          state.draftConfig.size.extra +
+          state.draftConfig.milk.extra +
+          state.draftConfig.brew.extra
+        );
+      }
+
+      function renderOptionGroup(container, options, currentSelected, onSelect) {
+        container.innerHTML = '';
+        options.forEach((opt) => {
+          const isSelected = opt.label === currentSelected.label;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.setAttribute('aria-pressed', String(isSelected));
+          btn.className = isSelected
+            ? 'min-h-[44px] px-3 py-2 rounded-2xl bg-amber text-amberInk font-semibold text-xs sm:text-sm flex flex-col items-center justify-center cursor-pointer'
+            : 'min-h-[44px] px-3 py-2 rounded-2xl bg-surface border border-[rgba(235,214,185,0.12)] text-ink/90 hover:border-[rgba(212,148,86,0.4)] text-xs sm:text-sm flex flex-col items-center justify-center transition-colors cursor-pointer';
+
+          btn.innerHTML = `
+            <span>${opt.label}</span>
+            ${opt.extra > 0 ? `<span class="text-[11px] opacity-85">+${formatIQD(opt.extra)}</span>` : ''}
+          `;
+
+          btn.addEventListener('click', () => {
+            onSelect(opt);
+            syncCustomizeModal();
+          });
+
+          container.appendChild(btn);
+        });
+      }
+
+      function syncCustomizeModal() {
+        if (!state.customizingItem) return;
+
+        customizeTitleEl.textContent = state.customizingItem.name;
+        customizeSubtitleEl.textContent = `${state.customizingItem.origin} • اختر تفاصيل التحضير`;
+
+        renderOptionGroup(sizeOptionsEl, SIZE_OPTIONS, state.draftConfig.size, (opt) => {
+          state.draftConfig.size = opt;
+        });
+
+        renderOptionGroup(milkOptionsEl, MILK_OPTIONS, state.draftConfig.milk, (opt) => {
+          state.draftConfig.milk = opt;
+        });
+
+        renderOptionGroup(brewOptionsEl, BREW_OPTIONS, state.draftConfig.brew, (opt) => {
+          state.draftConfig.brew = opt;
+        });
+
+        customizeLivePriceEl.textContent = formatIQD(computeDraftPrice());
+      }
+
+      function openCustomizeModal(item, triggerEl) {
+        if (modalCloseTimer !== null) {
+          clearTimeout(modalCloseTimer);
+          modalCloseTimer = null;
+        }
+        state.lastFocusedElement = triggerEl || document.activeElement;
+        state.customizingItem = item;
+        state.draftConfig = {
+          size: SIZE_OPTIONS[1],
+          milk: MILK_OPTIONS[0],
+          brew: BREW_OPTIONS[0],
+          notes: '',
+        };
+        customNotesInput.value = '';
+        syncCustomizeModal();
+
+        customizeModal.classList.remove('hidden');
+        customizeModal.classList.add('flex');
+        customizeModalPanel.classList.remove('is-closing');
+
+        if (!isReducedMotionActive()) {
+          modalBlurTracker.pulseDirectional(0, 14, 520);
+          requestAnimationFrame(() => {
+            customizeModalPanel.classList.add('is-open');
+          });
+        } else {
+          modalBlurTracker.clearBlurImmediate();
+          customizeModalPanel.classList.add('is-open');
+        }
+        closeCustomizeBtn.focus();
+      }
+
+      function closeCustomizeModal() {
+        state.customizingItem = null;
+        if (modalCloseTimer !== null) {
+          clearTimeout(modalCloseTimer);
+          modalCloseTimer = null;
+        }
+
+        const finishClose = () => {
+          modalCloseTimer = null;
+          customizeModalPanel.classList.remove('is-open', 'is-closing');
+          modalBlurTracker.clearBlurImmediate();
+          customizeModal.classList.add('hidden');
+          customizeModal.classList.remove('flex');
+          if (state.lastFocusedElement && typeof state.lastFocusedElement.focus === 'function') {
+            state.lastFocusedElement.focus();
+          }
+        };
+
+        if (isReducedMotionActive()) {
+          finishClose();
+          return;
+        }
+
+        // خروج أسرع بنسبة 25% مع ضبابية حركة خفيفة
+        customizeModalPanel.classList.remove('is-open');
+        customizeModalPanel.classList.add('is-closing');
+        modalBlurTracker.pulseDirectional(0, 12, 340);
+        modalCloseTimer = setTimeout(finishClose, 340);
+      }
+
+      function closeCustomizeModal() {
+        customizeModal.classList.add('hidden');
+        customizeModal.classList.remove('flex');
+        state.customizingItem = null;
+        if (state.lastFocusedElement && typeof state.lastFocusedElement.focus === 'function') {
+          state.lastFocusedElement.focus();
+        }
+      }
+
+      confirmAddBtn.addEventListener('click', () => {
+        if (!state.customizingItem) return;
+
+        const unitPrice = computeDraftPrice();
+        const notesTrimmed = customNotesInput.value.trim();
+        const configKey = [
+          state.customizingItem.id,
+          state.draftConfig.size.label,
+          state.draftConfig.milk.label,
+          state.draftConfig.brew.label,
+          notesTrimmed,
+        ].join('|');
+
+        const existing = state.cart.find((entry) => entry.configKey === configKey);
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          state.cart.push({
+            configKey,
+            itemId: state.customizingItem.id,
+            name: state.customizingItem.name,
+            size: state.draftConfig.size.label,
+            milk: state.draftConfig.milk.label,
+            brew: state.draftConfig.brew.label,
+            notes: notesTrimmed,
+            unitPrice,
+            quantity: 1,
+          });
+        }
+
+        closeCustomizeModal();
+        renderCart();
+        openCartDrawer();
+      });
+
+      closeCustomizeBtn.addEventListener('click', closeCustomizeModal);
+      customizeModal.addEventListener('click', (e) => {
+        if (e.target === customizeModal) closeCustomizeModal();
+      });
+
+      /* -------------------------------------------------------------------
+         5. درج سلة الطلبات الجانبي وإدارة الكميات وتأكيد الطلب
+         ------------------------------------------------------------------- */
+      const cartDrawer = document.getElementById('cart-drawer');
+      const cartBackdrop = document.getElementById('cart-drawer-backdrop');
+      const openCartBtn = document.getElementById('open-cart-btn');
+      const heroOpenCartBtn = document.getElementById('hero-open-cart-btn');
+      const closeCartBtn = document.getElementById('close-cart-btn');
+      const cartItemsContainer = document.getElementById('cart-items-container');
+      const cartCountBadge = document.getElementById('cart-count-badge');
+      const cartSubtotalEl = document.getElementById('cart-subtotal');
+      const cartServiceFeeEl = document.getElementById('cart-service-fee');
+      const cartTotalEl = document.getElementById('cart-total');
+      const clearCartBtn = document.getElementById('clear-cart-btn');
+      const submitOrderBtn = document.getElementById('submit-order-btn');
+      const orderConfirmationBanner = document.getElementById('order-confirmation-banner');
+      const orderConfirmationDetails = document.getElementById('order-confirmation-details');
+      const newOrderBtn = document.getElementById('new-order-btn');
+      const drawerBlurTracker = createVelocityBlurTracker(
+        cartDrawer,
+        'bahr-drawer-blur',
+        drawerBlurNode,
+        2.4,
+        1.1
+      );
+      let drawerCloseTimer = null;
+
+      cartDrawer.addEventListener(
+        'pointermove',
+        (e) => {
+          if (e.pointerType === 'mouse') {
+            drawerBlurTracker.trackPointer(e.clientX, e.clientY);
+          }
+        },
+        { passive: true }
+      );
+      cartDrawer.addEventListener('pointerleave', () => drawerBlurTracker.resetPointerSample(), {
+        passive: true,
+      });
+
+      function openCartDrawer(triggerEl) {
+        if (drawerCloseTimer !== null) {
+          clearTimeout(drawerCloseTimer);
+          drawerCloseTimer = null;
+        }
+        if (triggerEl) state.lastFocusedElement = triggerEl;
+        cartBackdrop.classList.remove('hidden');
+        cartDrawer.classList.remove('is-closing');
+
+        if (!isReducedMotionActive()) {
+          drawerBlurTracker.pulseDirectional(24, 0, 520);
+          requestAnimationFrame(() => {
+            cartDrawer.classList.add('is-open');
+          });
+        } else {
+          drawerBlurTracker.clearBlurImmediate();
+          cartDrawer.classList.add('is-open');
+        }
+        closeCartBtn.focus();
+      }
+
+      function closeCartDrawer() {
+        if (drawerCloseTimer !== null) {
+          clearTimeout(drawerCloseTimer);
+          drawerCloseTimer = null;
+        }
+
+        const finishClose = () => {
+          drawerCloseTimer = null;
+          cartDrawer.classList.remove('is-open', 'is-closing');
+          drawerBlurTracker.clearBlurImmediate();
+          cartBackdrop.classList.add('hidden');
+          if (state.lastFocusedElement && typeof state.lastFocusedElement.focus === 'function') {
+            state.lastFocusedElement.focus();
+          }
+        };
+
+        if (isReducedMotionActive()) {
+          finishClose();
+          return;
+        }
+
+        // خروج أسرع بنسبة 25% مع ضبابية حركة أفقية دقيقة (<= 2.4px)
+        cartDrawer.classList.remove('is-open');
+        cartDrawer.classList.add('is-closing');
+        drawerBlurTracker.pulseDirectional(24, 0, 340);
+        drawerCloseTimer = setTimeout(finishClose, 340);
+      }
+
+      function closeCartDrawer() {
+        cartDrawer.classList.add('-translate-x-full');
+        cartDrawer.classList.remove('translate-x-0');
+        cartBackdrop.classList.add('hidden');
+        if (state.lastFocusedElement && typeof state.lastFocusedElement.focus === 'function') {
+          state.lastFocusedElement.focus();
+        }
+      }
+
+      function renderCart() {
+        const totalItems = state.cart.reduce((sum, entry) => sum + entry.quantity, 0);
+        cartCountBadge.textContent = String(totalItems);
+
+        const subtotal = state.cart.reduce((sum, entry) => sum + entry.unitPrice * entry.quantity, 0);
+        const serviceFee = state.cart.length > 0 ? SERVICE_FEE_PER_ORDER : 0;
+        const total = subtotal + serviceFee;
+
+        cartSubtotalEl.textContent = formatIQD(subtotal);
+        cartServiceFeeEl.textContent = formatIQD(serviceFee);
+        cartTotalEl.textContent = formatIQD(total);
+        submitOrderBtn.disabled = state.cart.length === 0;
+
+        cartItemsContainer.innerHTML = '';
+
+        if (state.cart.length === 0) {
+          cartItemsContainer.innerHTML = `
+            <div class="rounded-2xl bg-surface border border-[rgba(235,214,185,0.1)] p-6 text-center space-y-2">
+              <p class="text-sm font-semibold text-ink">السلة فارغة حالياً</p>
+              <p class="text-xs text-muted leading-relaxed">
+                اختر مشروباً أو مخبوزاً من القائمة وخصص تفاصيله ليظهر هنا مباشرة.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        state.cart.forEach((entry, index) => {
+          const row = document.createElement('div');
+          row.className = 'rounded-2xl bg-surface border border-[rgba(235,214,185,0.12)] p-4 space-y-3';
+
+          const metaText = `${entry.size} • ${entry.milk} • ${entry.brew}`;
+          row.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h3 class="font-display font-bold text-sm sm:text-base text-ink">${entry.name}</h3>
+                <p class="text-xs text-muted mt-0.5">${metaText}</p>
+                ${
+                  entry.notes
+                    ? `<p class="text-xs text-amber mt-1">ملاحظة: ${entry.notes}</p>`
+                    : ''
+                }
+              </div>
+              <button
+                type="button"
+                data-remove-index="${index}"
+                aria-label="حذف ${entry.name}"
+                class="min-w-[36px] min-h-[36px] rounded-xl text-xs text-muted hover:text-ink hover:bg-elevated transition-colors cursor-pointer"
+              >
+                حذف
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <div class="inline-flex items-center gap-2 bg-elevated rounded-xl p-1 border border-[rgba(235,214,185,0.1)]">
+                <button
+                  type="button"
+                  data-dec-index="${index}"
+                  aria-label="تقليل كمية ${entry.name}"
+                  class="w-8 h-8 rounded-lg text-ink hover:bg-surface font-bold cursor-pointer"
+                >
+                  −
+                </button>
+                <span class="min-w-[24px] text-center text-sm font-semibold text-ink">${entry.quantity}</span>
+                <button
+                  type="button"
+                  data-inc-index="${index}"
+                  aria-label="زيادة كمية ${entry.name}"
+                  class="w-8 h-8 rounded-lg text-ink hover:bg-surface font-bold cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+
+              <span class="font-display font-bold text-sm text-ink">
+                ${formatIQD(entry.unitPrice * entry.quantity)}
+              </span>
+            </div>
+          `;
+
+          row.querySelector('[data-inc-index]').addEventListener('click', () => {
+            entry.quantity += 1;
+            renderCart();
+          });
+
+          row.querySelector('[data-dec-index]').addEventListener('click', () => {
+            if (entry.quantity > 1) {
+              entry.quantity -= 1;
+            } else {
+              state.cart.splice(index, 1);
+            }
+            renderCart();
+          });
+
+          row.querySelector('[data-remove-index]').addEventListener('click', () => {
+            state.cart.splice(index, 1);
+            renderCart();
+          });
+
+          cartItemsContainer.appendChild(row);
+        });
+      }
+
+      clearCartBtn.addEventListener('click', () => {
+        state.cart = [];
+        orderConfirmationBanner.classList.add('hidden');
+        renderCart();
+      });
+
+      submitOrderBtn.addEventListener('click', () => {
+        if (state.cart.length === 0) return;
+        const totalItems = state.cart.reduce((sum, entry) => sum + entry.quantity, 0);
+        const subtotal = state.cart.reduce((sum, entry) => sum + entry.unitPrice * entry.quantity, 0);
+        const grandTotal = subtotal + SERVICE_FEE_PER_ORDER;
+        const orderCode = `BH-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        orderConfirmationDetails.textContent = `رقم الطلب ${orderCode} • عدد العناصر: ${totalItems} • الإجمالي: ${formatIQD(grandTotal)}. يبدأ فريق البار بتحضير طلبك الآن في كافيه بحر.`;
+        orderConfirmationBanner.classList.remove('hidden');
+      });
+
+      newOrderBtn.addEventListener('click', () => {
+        state.cart = [];
+        orderConfirmationBanner.classList.add('hidden');
+        renderCart();
+      });
+
+      openCartBtn.addEventListener('click', (e) => openCartDrawer(e.currentTarget));
+      heroOpenCartBtn.addEventListener('click', (e) => openCartDrawer(e.currentTarget));
+      closeCartBtn.addEventListener('click', closeCartDrawer);
+      cartBackdrop.addEventListener('click', closeCartDrawer);
+
+      /* -------------------------------------------------------------------
+         6. تبويبات التصنيف ونموذج الحجز ومفتاح الهروب Escape
+         ------------------------------------------------------------------- */
+      const tabButtons = document.querySelectorAll('.category-tab');
+      tabButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const cat = btn.getAttribute('data-category');
+          state.activeCategory = cat;
+
+          tabButtons.forEach((other) => {
+            const active = other === btn;
+            other.setAttribute('aria-selected', String(active));
+            other.className = active
+              ? 'category-tab min-h-[44px] px-4 rounded-2xl text-sm font-semibold bg-amber text-amberInk transition-colors cursor-pointer'
+              : 'category-tab min-h-[44px] px-4 rounded-2xl text-sm font-medium bg-elevated text-ink/85 border border-[rgba(235,214,185,0.12)] hover:border-[rgba(212,148,86,0.4)] transition-colors cursor-pointer';
+          });
+
+          renderMenu();
+        });
+      });
+
+      const bookingForm = document.getElementById('booking-form');
+      const bookingDateInput = document.getElementById('booking-date');
+      const bookingFeedback = document.getElementById('booking-feedback');
+
+      if (bookingDateInput) {
+        const todayIso = new Date().toISOString().split('T')[0];
+        bookingDateInput.value = todayIso;
+        bookingDateInput.min = todayIso;
+      }
+
+      bookingForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('guest-name');
+        const guestName = nameInput.value.trim();
+        const guestCount = document.getElementById('guest-count').value;
+        const dateVal = bookingDateInput.value;
+        const timeVal = document.getElementById('booking-time').value;
+
+        bookingFeedback.classList.remove('hidden');
+        if (!guestName) {
+          bookingFeedback.textContent = 'يرجى إدخال الاسم لتأكيد طلب الحجز.';
+          nameInput.focus();
+          return;
+        }
+
+        bookingFeedback.textContent = `تم تسجيل طلب حجز باسم «${guestName}» لعدد ${guestCount} في تاريخ ${dateVal} (${timeVal}). ننتظرك بكل ترحيب في كافيه بحر.`;
+        bookingForm.reset();
+        bookingDateInput.value = new Date().toISOString().split('T')[0];
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (!customizeModal.classList.contains('hidden')) {
+            closeCustomizeModal();
+          } else if (!cartDrawer.classList.contains('-translate-x-full')) {
+            closeCartDrawer();
+          }
+        }
+      });
+
+      /* -------------------------------------------------------------------
+         7. انتقالات الكشف عند التمرير (IntersectionObserver) ودعم تقليل الحركة
+         ------------------------------------------------------------------- */
+      let revealObserver = null;
+
+      function observeRevealElements() {
+        const elements = document.querySelectorAll('.reveal-item');
+
+        if (isReducedMotionActive() || !('IntersectionObserver' in window)) {
+          elements.forEach((el) => el.classList.add('is-revealed'));
+          return;
+        }
+
+        if (!revealObserver) {
+          revealObserver = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('is-revealed');
+                  revealObserver.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+          );
+        }
+
+        elements.forEach((el) => {
+          if (!el.classList.contains('is-revealed')) {
+            revealObserver.observe(el);
+          }
+        });
+      }
+
+      const toggleMotionBtn = document.getElementById('toggle-motion-btn');
+      const motionStatusLabel = document.getElementById('motion-status-label');
+
+      function syncMotionModeUI() {
+        const reduced = isReducedMotionActive();
+        document.documentElement.classList.toggle('reduced-motion-mode', state.manualReducedMotion);
+        toggleMotionBtn.setAttribute('aria-pressed', String(state.manualReducedMotion));
+
+        if (reduced) {
+          motionStatusLabel.textContent = 'حركة مخففة نشطة';
+          tiltControllers.forEach((c) => c.reset());
+          blurTrackers.forEach((b) => b.clearBlurImmediate());
+          document.querySelectorAll('.reveal-item').forEach((el) => {
+            el.classList.remove('is-revealing');
+            el.classList.add('is-revealed');
+          });
+        } else {
+          motionStatusLabel.textContent = 'حركة هادئة: 60fps';
+          observeRevealElements();
+        }
+      }
+
+      toggleMotionBtn.addEventListener('click', () => {
+        state.manualReducedMotion = !state.manualReducedMotion;
+        syncMotionModeUI();
+      });
+
+      /* -------------------------------------------------------------------
+         8. مسار المؤشر الهالفتون عبر WebGPU مع بوابات الأمان والتوافق
+         يعمل فقط عند توفر navigator.gpu ومؤشر دقيق وتوقف عند إخفاء التبويب
+         ------------------------------------------------------------------- */
+      async function initWebGPUHalftoneTrail() {
+        const canvas = document.getElementById('webgpu-halftone-canvas');
+        if (!canvas) return;
+
+        const hasFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+        if (!navigator.gpu || !hasFinePointer || isReducedMotionActive()) {
+          canvas.style.display = 'none';
+          return;
+        }
+
+        try {
+          const adapter = await navigator.gpu.requestAdapter({ powerPreference: 'low-power' });
+          if (!adapter) {
+            canvas.style.display = 'none';
+            return;
+          }
+
+          const device = await adapter.requestDevice();
+          const context = canvas.getContext('webgpu');
+          if (!context) {
+            canvas.style.display = 'none';
+            return;
+          }
+
+          const format = navigator.gpu.getPreferredCanvasFormat();
+
+          function resizeCanvas() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const width = Math.max(1, Math.floor(window.innerWidth * dpr));
+            const height = Math.max(1, Math.floor(window.innerHeight * dpr));
+            if (canvas.width !== width || canvas.height !== height) {
+              canvas.width = width;
+              canvas.height = height;
+            }
+            context.configure({
+              device,
+              format,
+              alphaMode: 'premultiplied',
+            });
+          }
+
+          resizeCanvas();
+          window.addEventListener('resize', resizeCanvas, { passive: true });
+
+          // Uniform buffer: [pointerX_norm, pointerY_norm, energy, aspectRatio]
+          const uniformBuffer = device.createBuffer({
+            size: 16,
+            usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+          });
+
+          const shaderModule = device.createShaderModule({
+            code: `
+              struct Uniforms {
+                pointer : vec2<f32>,
+                energy : f32,
+                aspect : f32,
+              };
+
+              @group(0) @binding(0) var<uniform> u : Uniforms;
+
+              struct VertexOut {
+                @builtin(position) pos : vec4<f32>,
+                @location(0) uv : vec2<f32>,
+              };
+
+              @vertex
+              fn vs_main(@builtin(vertex_index) idx : u32) -> VertexOut {
+                var positions = array<vec2<f32>, 6>(
+                  vec2<f32>(-1.0, -1.0),
+                  vec2<f32>( 1.0, -1.0),
+                  vec2<f32>(-1.0,  1.0),
+                  vec2<f32>(-1.0,  1.0),
+                  vec2<f32>( 1.0, -1.0),
+                  vec2<f32>( 1.0,  1.0)
+                );
+                var out : VertexOut;
+                let p = positions[idx];
+                out.pos = vec4<f32>(p, 0.0, 1.0);
+                out.uv = p * 0.5 + 0.5;
+                return out;
+              }
+
+              @fragment
+              fn fs_main(in : VertexOut) -> @location(0) vec4<f32> {
+                if (u.energy <= 0.002) {
+                  return vec4<f32>(0.0, 0.0, 0.0, 0.0);
+                }
+
+                // شبكة نقاط هالفتون دقيقة ومريحة للعين بلون كهرماني دافئ
+                let gridScale = vec2<f32>(72.0 * u.aspect, 72.0);
+                let cell = fract(in.uv * gridScale) - 0.5;
+                let distToDot = length(cell);
+
+                var pAdjusted = in.uv - u.pointer;
+                pAdjusted.x *= u.aspect;
+                let distToCursor = length(pAdjusted);
+
+                let falloff = exp(-distToCursor * distToCursor * 28.0) * u.energy;
+                let radius = clamp(0.06 + falloff * 0.24, 0.0, 0.32);
+                let dotMask = 1.0 - smoothstep(radius - 0.04, radius + 0.04, distToDot);
+
+                let amberColor = vec3<f32>(0.831, 0.580, 0.337);
+                let alpha = dotMask * falloff * 0.28;
+                return vec4<f32>(amberColor * alpha, alpha);
+              }
+            `,
+          });
+
+          const pipeline = device.createRenderPipeline({
+            layout: 'auto',
+            vertex: { module: shaderModule, entryPoint: 'vs_main' },
+            fragment: {
+              module: shaderModule,
+              entryPoint: 'fs_main',
+              targets: [{ format }],
+            },
+            primitive: { topology: 'triangle-list' },
+          });
+
+          const bindGroup = device.createBindGroup({
+            layout: pipeline.getBindGroupLayout(0),
+            entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
+          });
+
+          let targetX = 0.5;
+          let targetY = 0.5;
+          let smoothX = 0.5;
+          let smoothY = 0.5;
+          let energy = 0.0;
+          let running = true;
+
+          window.addEventListener(
+            'pointermove',
+            (e) => {
+              if (e.pointerType !== 'mouse' || isReducedMotionActive()) return;
+              targetX = e.clientX / Math.max(window.innerWidth, 1);
+              targetY = 1.0 - e.clientY / Math.max(window.innerHeight, 1);
+              energy = Math.min(1.0, energy + 0.35);
+            },
+            { passive: true }
+          );
+
+          document.addEventListener('visibilitychange', () => {
+            running = document.visibilityState === 'visible';
+            if (running && !isReducedMotionActive()) {
+              requestAnimationFrame(frame);
+            }
+          });
+
+          const uniformArray = new Float32Array(4);
+
+          function frame() {
+            if (!running || isReducedMotionActive()) {
+              canvas.style.display = isReducedMotionActive() ? 'none' : 'block';
+              return;
+            }
+            canvas.style.display = 'block';
+
+            smoothX += (targetX - smoothX) * 0.16;
+            smoothY += (targetY - smoothY) * 0.16;
+            energy *= 0.93;
+
+            const aspect = canvas.width / Math.max(canvas.height, 1);
+            uniformArray[0] = smoothX;
+            uniformArray[1] = smoothY;
+            uniformArray[2] = energy;
+            uniformArray[3] = aspect;
+            device.queue.writeBuffer(uniformBuffer, 0, uniformArray);
+
+            const encoder = device.createCommandEncoder();
+            const view = context.getCurrentTexture().createView();
+            const pass = encoder.beginRenderPass({
+              colorAttachments: [
+                {
+                  view,
+                  clearValue: { r: 0, g: 0, b: 0, a: 0 },
+                  loadOp: 'clear',
+                  storeOp: 'store',
+                },
+              ],
+            });
+            pass.setPipeline(pipeline);
+            pass.setBindGroup(0, bindGroup);
+            pass.draw(6);
+            pass.end();
+            device.queue.submit([encoder.finish()]);
+
+            requestAnimationFrame(frame);
+          }
+
+          requestAnimationFrame(frame);
+        } catch (_err) {
+          // في حال عدم دعم الجهاز أو حظر WebGPU نعتمد الخلفية الهادئة الثابتة
+          canvas.style.display = 'none';
+        }
+      }
+
+      /* -------------------------------------------------------------------
+         9. التهيئة الأولية
+         ------------------------------------------------------------------- */
+      renderMenu();
+      renderCart();
+      syncMotionModeUI();
+      initWebGPUHalftoneTrail();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة تحكم كافيه بحر | إدارة الطلبات والطاولات والحجوزات</title>
+
+  <!-- خطوط عربية مريحة للقراءة والتمييز البصري -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@500;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- مكتبة Tailwind CSS للترتيب المتجاوب السريع -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            timber: '#14110f',
+            stoneMatte: '#1d1916',
+            stoneRaised: '#26211d',
+            chalk: '#efe6d8',
+            ash: '#b8a894',
+            amberGlow: '#d49456',
+            amberInk: '#15110e',
+            sage: '#89a88e',
+            ochre: '#d1a254',
+            roseMuted: '#c8786d',
+            slateBlue: '#849eb3',
+          },
+          fontFamily: {
+            sans: ['IBM Plex Sans Arabic', 'Tajawal', 'sans-serif'],
+            display: ['Tajawal', 'IBM Plex Sans Arabic', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* =====================================================================
+       1. نظام الألوان والمواد المعمارية المريحة للعين (Smoked Timber & Matte Stone)
+       مصمم برؤية مهندس ديكور وألوان لتجنب الإجهاد البصري والوهج الحاد
+       ===================================================================== */
+    :root {
+      --bg-timber: #14110f;
+      --bg-stone: #1d1916;
+      --bg-raised: #26211d;
+      --border-hairline: rgba(235, 214, 185, 0.12);
+      --border-focus: rgba(212, 148, 86, 0.44);
+      --text-chalk: #efe6d8;
+      --text-ash: #b8a894;
+      --accent-amber: #d49456;
+      --accent-ink: #15110e;
+      --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-exit: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+      --dur-enter: 460ms;
+      --dur-exit: 300ms;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-timber);
+      color: var(--text-chalk);
+      font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse 70% 45% at 85% 8%, rgba(212, 148, 86, 0.075), transparent 70%),
+        radial-gradient(ellipse 60% 50% at 15% 85%, rgba(137, 168, 142, 0.05), transparent 72%),
+        linear-gradient(180deg, #14110f 0%, #181411 50%, #14110f 100%);
+      color: var(--text-chalk);
+      line-height: 1.65;
+      overflow-x: clip;
+    }
+
+    .measure-prose {
+      max-width: 64ch;
+    }
+
+    :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+      outline: 2px solid var(--accent-amber);
+      outline-offset: 2px;
+      border-radius: 0.75rem;
+    }
+
+    /* =====================================================================
+       2. قوالب شكل وإطار صورة عنصر المنيو (5 أنماط بصرية قابلة للتخصيص)
+       ===================================================================== */
+    .shape-classic {
+      border-radius: 1.15rem;
+      clip-path: none;
+    }
+
+    .shape-angled {
+      border-radius: 1rem;
+      clip-path: polygon(0 0, 100% 0, 100% 86%, 88% 100%, 0 100%);
+    }
+
+    .shape-soft-frame {
+      border-radius: 2rem;
+      clip-path: none;
+      box-shadow: inset 0 0 0 2px rgba(212, 148, 86, 0.28);
+    }
+
+    .shape-panorama {
+      border-radius: 0.9rem;
+      clip-path: inset(8% 0% 8% 0% round 0.9rem);
+    }
+
+    .shape-vertical {
+      border-radius: 1.35rem;
+      clip-path: inset(0% 10% 0% 10% round 1.35rem);
+    }
+
+    /* =====================================================================
+       3. حركة 60/120fps مع ضبابية حركة خفيفة مرتبطة بالسرعة (Motion Blur)
+       ===================================================================== */
+    .reveal-panel {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+      transition:
+        opacity 520ms var(--ease-enter),
+        transform 560ms var(--ease-enter);
+    }
+
+    .reveal-panel.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .motion-sheet {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0) scale(0.985);
+      transition:
+        opacity var(--dur-exit) var(--ease-exit),
+        transform var(--dur-exit) var(--ease-exit);
+    }
+
+    .motion-sheet.is-open {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      transition:
+        opacity var(--dur-enter) var(--ease-enter),
+        transform var(--dur-enter) var(--ease-enter);
+      will-change: opacity, transform, filter;
+    }
+
+    .motion-sheet.is-closing {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0) scale(0.985);
+      transition:
+        opacity var(--dur-exit) var(--ease-exit),
+        transform var(--dur-exit) var(--ease-exit);
+      will-change: opacity, transform, filter;
+    }
+
+    /* ضغط لمسي متزن للأزرار في وضع الحركة الكاملة */
+    @media (prefers-reduced-motion: no-preference) {
+      html:not(.reduced-motion-active) button:not(:disabled):active,
+      html:not(.reduced-motion-active) [role="tab"]:active {
+        transform: scale(0.97);
+        transition: transform 110ms var(--ease-enter);
+      }
+    }
+
+    /* دعم متدرج لخيار تقليل الحركة */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-panel {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: opacity 160ms ease-out !important;
+      }
+
+      .motion-sheet {
+        transform: none !important;
+        filter: none !important;
+        transition: opacity 160ms ease-out !important;
+      }
+    }
+
+    html.reduced-motion-active .reveal-panel {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: opacity 160ms ease-out !important;
+    }
+
+    html.reduced-motion-active .motion-sheet {
+      transform: none !important;
+      filter: none !important;
+      transition: opacity 160ms ease-out !important;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- مرشح SVG دقيق جداً لضبابية الحركة الموجهة حسب السرعة اللحظية (حد أقصى 2.2px) -->
+  <svg
+    aria-hidden="true"
+    width="0"
+    height="0"
+    style="position:fixed;width:0;height:0;overflow:hidden;pointer-events:none;"
+  >
+    <defs>
+      <filter id="admin-sheet-blur" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+        <feGaussianBlur id="admin-sheet-blur-node" in="SourceGraphic" stdDeviation="0 0" />
+      </filter>
+      <filter id="admin-toast-blur" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+        <feGaussianBlur id="admin-toast-blur-node" in="SourceGraphic" stdDeviation="0 0" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- شريط الإشعارات العائم (Toast) للمراجعات والحفظ الفوري -->
+  <div
+    id="live-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-5 left-5 right-5 sm:right-auto sm:w-[400px] z-50 hidden rounded-2xl bg-stoneRaised border border-amberGlow/45 px-4 py-3.5 text-sm text-chalk shadow-xl"
+  >
+    <div class="flex items-start justify-between gap-3">
+      <p id="live-toast-text" class="leading-relaxed"></p>
+      <button
+        id="dismiss-toast-btn"
+        type="button"
+        aria-label="إغلاق الإشعار"
+        class="text-xs text-ash hover:text-chalk px-2 py-1 rounded-lg cursor-pointer"
+      >
+        إغلاق
+      </button>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       الشريط العلوي للوحة التحكم
+       ===================================================================== -->
+  <header class="sticky top-0 z-30 border-b border-[rgba(235,214,185,0.12)] bg-timber/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-11 h-11 rounded-2xl bg-stoneRaised border border-amberGlow/35 flex items-center justify-center font-display font-extrabold text-xl text-amberGlow"
+            aria-hidden="true"
+          >
+            بح
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h1 class="font-display font-extrabold text-xl sm:text-2xl text-chalk">
+                لوحة تحكم كافيه بحر
+              </h1>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amberGlow/15 text-amberGlow border border-amberGlow/30">
+                إدارة التشغيل المباشر
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-ash">
+              مراقبة الطلبات وعناصر المنيو • اعتماد الحجوزات • ضبط حالة الطاولات لحظياً
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- أدوات التحكم السريعة: راحة الحركة، تصدير JSON، استعادة الافتراضي -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button
+          id="motion-mode-btn"
+          type="button"
+          aria-pressed="false"
+          class="min-h-[42px] px-3.5 rounded-2xl bg-stoneMatte border border-[rgba(235,214,185,0.14)] text-xs sm:text-sm text-ash hover:text-chalk hover:border-amberGlow/40 transition-colors inline-flex items-center gap-2 cursor-pointer"
+        >
+          <span class="w-2 h-2 rounded-full bg-sage" aria-hidden="true"></span>
+          <span id="motion-mode-label">حركة سلسة + ضبابية خفيفة</span>
+        </button>
+
+        <button
+          id="export-json-btn"
+          type="button"
+          class="min-h-[42px] px-4 rounded-2xl bg-stoneMatte border border-[rgba(235,214,185,0.14)] text-xs sm:text-sm text-chalk hover:border-amberGlow/45 transition-colors inline-flex items-center gap-2 cursor-pointer"
+        >
+          <span>تصدير نسخة JSON</span>
+        </button>
+
+        <button
+          id="reset-demo-btn"
+          type="button"
+          class="min-h-[42px] px-4 rounded-2xl bg-stoneRaised border border-roseMuted/35 text-xs sm:text-sm text-roseMuted hover:text-chalk hover:border-roseMuted transition-colors inline-flex items-center gap-2 cursor-pointer"
+        >
+          <span>استعادة البيانات الافتراضية</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- شريط التنقل الرئيسي بين الأقسام الثلاثة -->
+    <nav
+      aria-label="أقسام لوحة التحكم"
+      class="border-t border-[rgba(235,214,185,0.08)] bg-stoneMatte/95"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center gap-2 overflow-x-auto" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected="true"
+          data-section-tab="orders-menu"
+          class="section-tab min-h-[42px] px-4 rounded-xl text-xs sm:text-sm font-semibold bg-amberGlow text-amberInk whitespace-nowrap cursor-pointer transition-colors"
+        >
+          1. إدارة الطلبات وعناصر المنيو
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected="false"
+          data-section-tab="reservations"
+          class="section-tab min-h-[42px] px-4 rounded-xl text-xs sm:text-sm font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] whitespace-nowrap cursor-pointer transition-colors"
+        >
+          2. موافقة ورفض حجوزات الطاولات
+          <span id="pending-reservations-pill" class="mr-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-ochre/20 text-ochre">0</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected="false"
+          data-section-tab="tables"
+          class="section-tab min-h-[42px] px-4 rounded-xl text-xs sm:text-sm font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] whitespace-nowrap cursor-pointer transition-colors"
+        >
+          3. تغيير حالة الطاولات
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <!-- ===================================================================
+         بطاقات المؤشرات السريعة (KPIs)
+         =================================================================== -->
+    <section aria-label="ملخص التشغيل" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="reveal-panel rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5">
+        <span class="text-xs text-ash">الطلبات النشطة</span>
+        <p id="kpi-active-orders" class="font-display font-extrabold text-2xl sm:text-3xl text-chalk mt-1">0</p>
+        <span class="text-xs text-amberGlow mt-1 block">قيد التحضير والجاهزة</span>
+      </div>
+
+      <div class="reveal-panel rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5">
+        <span class="text-xs text-ash">عناصر المنيو المتاحة</span>
+        <p id="kpi-available-menu" class="font-display font-extrabold text-2xl sm:text-3xl text-sage mt-1">0</p>
+        <span id="kpi-total-menu-sub" class="text-xs text-ash mt-1 block">من أصل 0 عنصر</span>
+      </div>
+
+      <div class="reveal-panel rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5">
+        <span class="text-xs text-ash">حجوزات بانتظار القرار</span>
+        <p id="kpi-pending-res" class="font-display font-extrabold text-2xl sm:text-3xl text-ochre mt-1">0</p>
+        <span class="text-xs text-ash mt-1 block">قبول أو رفض مع سبب</span>
+      </div>
+
+      <div class="reveal-panel rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5">
+        <span class="text-xs text-ash">الطاولات المتاحة الآن</span>
+        <p id="kpi-free-tables" class="font-display font-extrabold text-2xl sm:text-3xl text-slateBlue mt-1">0</p>
+        <span id="kpi-total-tables-sub" class="text-xs text-ash mt-1 block">من أصل 0 طاولة</span>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         القسم الأول: إدارة الطلبات وعناصر المنيو
+         =================================================================== -->
+    <section
+      id="section-orders-menu"
+      aria-labelledby="heading-orders-menu"
+      class="reveal-panel space-y-8"
+    >
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[rgba(235,214,185,0.1)] pb-4">
+        <div>
+          <span class="text-xs font-semibold text-amberGlow">القسم الأول</span>
+          <h2 id="heading-orders-menu" class="font-display font-bold text-2xl text-chalk">
+            إدارة الطلبات وعناصر المنيو
+          </h2>
+          <p class="measure-prose text-sm text-ash mt-1">
+            تابع الطلبات الواردة، غيّر حالتها التشغيلية، وأضف أو عدّل عناصر المنيو مع اختيار شكل إطار الصورة ومعاينته مباشرة.
+          </p>
+        </div>
+      </div>
+
+      <!-- 1A. جدول / بطاقات الطلبات النشطة -->
+      <div class="rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 class="font-display font-bold text-lg text-chalk">الطلبات الواردة والنشطة</h3>
+            <p class="text-xs sm:text-sm text-ash">تحديث حالة الطلب ينعكس فوراً على سجل التشغيل والمؤشرات.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2" id="order-filter-bar">
+            <button type="button" data-order-filter="all" class="order-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-semibold bg-amberGlow text-amberInk cursor-pointer">الكل</button>
+            <button type="button" data-order-filter="قيد التحضير" class="order-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">قيد التحضير</button>
+            <button type="button" data-order-filter="جاهز" class="order-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">جاهز</button>
+            <button type="button" data-order-filter="مكتمل" class="order-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">مكتمل</button>
+            <button type="button" data-order-filter="ملغي" class="order-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">ملغي</button>
+          </div>
+        </div>
+
+        <div id="orders-list-container" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- 1B. محرر إضافة وتعديل عناصر المنيو مع اختيار شكل العنصر ومعاينة حية -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        <form
+          id="menu-editor-form"
+          class="xl:col-span-7 rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5 sm:p-7 space-y-5"
+        >
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <span class="text-xs font-semibold text-amberGlow">محرر المنيو والشكل البصري</span>
+              <h3 id="menu-form-heading" class="font-display font-bold text-lg text-chalk mt-0.5">
+                إضافة عنصر جديد إلى المنيو
+              </h3>
+            </div>
+            <button
+              id="cancel-menu-edit-btn"
+              type="button"
+              class="hidden min-h-[38px] px-3.5 rounded-xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-xs text-ash hover:text-chalk cursor-pointer"
+            >
+              إلغاء التعديل
+            </button>
+          </div>
+
+          <input type="hidden" id="menu-edit-id" value="" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="menu-item-name" class="block text-sm font-medium text-chalk mb-1.5">
+                اسم الصنف / الطلب
+              </label>
+              <input
+                id="menu-item-name"
+                type="text"
+                required
+                placeholder="مثال: لاتيه الهيل والزعفران"
+                class="w-full min-h-[44px] px-4 rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+              />
+            </div>
+
+            <div>
+              <label for="menu-item-price" class="block text-sm font-medium text-chalk mb-1.5">
+                السعر (د.ع)
+              </label>
+              <input
+                id="menu-item-price"
+                type="number"
+                min="500"
+                step="500"
+                required
+                placeholder="6500"
+                class="w-full min-h-[44px] px-4 rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="menu-item-category" class="block text-sm font-medium text-chalk mb-1.5">
+                التصنيف
+              </label>
+              <select
+                id="menu-item-category"
+                class="w-full min-h-[44px] px-3.5 rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+              >
+                <option value="إسبرسو ومقطر">إسبرسو ومقطر</option>
+                <option value="مشروبات بحر الخاصة">مشروبات بحر الخاصة</option>
+                <option value="مخبوزات دافئة">مخبوزات دافئة</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="menu-item-shape" class="block text-sm font-medium text-chalk mb-1.5">
+                شكل العنصر / الإطار
+              </label>
+              <select
+                id="menu-item-shape"
+                class="w-full min-h-[44px] px-3.5 rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+              >
+                <option value="classic">كلاسيكي (حواف متزنة)</option>
+                <option value="angled">زاوية مائلة معمارية</option>
+                <option value="soft-frame">إطار ناعم مزدوج</option>
+                <option value="panorama">بانوراما أفقية</option>
+                <option value="vertical">عمودي رشيق</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="menu-item-available" class="block text-sm font-medium text-chalk mb-1.5">
+                حالة التوفر
+              </label>
+              <select
+                id="menu-item-available"
+                class="w-full min-h-[44px] px-3.5 rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+              >
+                <option value="true">متاح للطلب</option>
+                <option value="false">غير متوفر حالياً</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="menu-item-image" class="block text-sm font-medium text-chalk mb-1.5">
+              رابط الصورة الفوتوغرافية (مع بديل تلقائي)
+            </label>
+            <input
+              id="menu-item-image"
+              type="url"
+              placeholder="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=900&q=80"
+              class="w-full min-h-[44px] px-4 rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+            />
+          </div>
+
+          <div>
+            <label for="menu-item-desc" class="block text-sm font-medium text-chalk mb-1.5">
+              الوصف والإيحاءات
+            </label>
+            <textarea
+              id="menu-item-desc"
+              rows="2"
+              required
+              placeholder="اكتب وصفاً واضحاً يبرز قوام المشروب أو المخبوز وإيحاءاته..."
+              class="w-full px-4 py-3 rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+            ></textarea>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 pt-1">
+            <button
+              id="save-menu-item-btn"
+              type="submit"
+              class="min-h-[44px] px-6 rounded-2xl bg-amberGlow text-amberInk font-semibold text-sm hover:brightness-105 cursor-pointer"
+            >
+              حفظ عنصر المنيو
+            </button>
+          </div>
+        </form>
+
+        <!-- معاينة حية لشكل الصنف قبل الحفظ -->
+        <div class="xl:col-span-5 rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-amberGlow">معاينة شكل العنصر المباشرة</span>
+            <span id="preview-availability-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-sage/20 text-sage">
+              متاح للطلب
+            </span>
+          </div>
+
+          <div class="rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.1)] p-4 space-y-3">
+            <div class="h-44 w-full overflow-hidden bg-timber rounded-2xl flex items-center justify-center">
+              <img
+                id="menu-live-preview-img"
+                src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=900&q=80"
+                alt="معاينة شكل عنصر المنيو"
+                class="shape-classic w-full h-full object-cover transition-all duration-300"
+                onerror="this.onerror=null;this.src='https://placehold.co/800x500/1d1916/efe6d8?text=%D9%85%D8%B9%D8%A7%D9%8A%D9%86%D8%A9+%D8%A7%D9%84%D8%B5%D9%86%D9%81';"
+              />
+            </div>
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span id="menu-live-preview-cat" class="text-xs text-ash">إسبرسو ومقطر</span>
+                <h4 id="menu-live-preview-name" class="font-display font-bold text-lg text-chalk">
+                  لاتيه الهيل والزعفران
+                </h4>
+              </div>
+              <span id="menu-live-preview-price" class="font-display font-bold text-base text-amberGlow shrink-0">
+                6,500 د.ع
+              </span>
+            </div>
+            <p id="menu-live-preview-desc" class="text-sm text-ash leading-relaxed">
+              اكتب وصفاً واضحاً يبرز قوام المشروب أو المخبوز وإيحاءاته...
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1C. قائمة الأصناف الحالية في المنيو -->
+      <div class="rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5 sm:p-7 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="font-display font-bold text-lg text-chalk">عناصر المنيو المسجلة</h3>
+            <p class="text-xs sm:text-sm text-ash">يمكنك تعديل الاسم أو السعر أو الوصف أو شكل الإطار، أو تبديل التوفر مباشرة.</p>
+          </div>
+        </div>
+
+        <div id="menu-items-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         القسم الثاني: موافقة ورفض حجوزات الطاولات
+         =================================================================== -->
+    <section
+      id="section-reservations"
+      aria-labelledby="heading-reservations"
+      class="reveal-panel space-y-6 pt-4"
+    >
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[rgba(235,214,185,0.1)] pb-4">
+        <div>
+          <span class="text-xs font-semibold text-amberGlow">القسم الثاني</span>
+          <h2 id="heading-reservations" class="font-display font-bold text-2xl text-chalk">
+            موافقة ورفض حجوزات الطاولات
+          </h2>
+          <p class="measure-prose text-sm text-ash mt-1">
+            راجع طلبات الحجز الواردة واعتمدها أو ارفضها مع إرفاق سبب أو ملاحظة، وتحديث حالة الطاولة تلقائياً عند القبول.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2" id="reservation-filter-bar">
+          <button type="button" data-res-filter="all" class="res-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-semibold bg-amberGlow text-amberInk cursor-pointer">الكل</button>
+          <button type="button" data-res-filter="pending" class="res-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">بانتظار القرار</button>
+          <button type="button" data-res-filter="accepted" class="res-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">مقبولة</button>
+          <button type="button" data-res-filter="rejected" class="res-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">مرفوضة</button>
+        </div>
+      </div>
+
+      <div id="reservations-container" class="grid grid-cols-1 lg:grid-cols-2 gap-5"></div>
+    </section>
+
+    <!-- ===================================================================
+         القسم الثالث: تغيير حالة الطاولات المباشر
+         =================================================================== -->
+    <section
+      id="section-tables"
+      aria-labelledby="heading-tables"
+      class="reveal-panel space-y-6 pt-4"
+    >
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[rgba(235,214,185,0.1)] pb-4">
+        <div>
+          <span class="text-xs font-semibold text-amberGlow">القسم الثالث</span>
+          <h2 id="heading-tables" class="font-display font-bold text-2xl text-chalk">
+            تغيير حالة الطاولات في الرواق
+          </h2>
+          <p class="measure-prose text-sm text-ash mt-1">
+            تحكم فوري في حالة كل طاولة (متاحة، محجوزة، مشغولة، صيانة) مع تحديث اسم الضيف أو رقم الطلب المرتبط.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2" id="table-filter-bar">
+          <button type="button" data-table-filter="all" class="table-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-semibold bg-amberGlow text-amberInk cursor-pointer">جميع الطاولات</button>
+          <button type="button" data-table-filter="متاحة" class="table-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">متاحة</button>
+          <button type="button" data-table-filter="محجوزة" class="table-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">محجوزة</button>
+          <button type="button" data-table-filter="مشغولة" class="table-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">مشغولة</button>
+          <button type="button" data-table-filter="صيانة" class="table-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer">صيانة</button>
+        </div>
+      </div>
+
+      <div id="tables-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+  </main>
+
+  <!-- =====================================================================
+       نافذة تعديل تفاصيل الطاولة / الضيف / الطلب المرتبط
+       ===================================================================== -->
+  <div
+    id="table-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="table-modal-title"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-timber/80 backdrop-blur-xs"
+  >
+    <div
+      id="table-modal-sheet"
+      class="motion-sheet w-full max-w-md rounded-3xl bg-stoneRaised border border-[rgba(235,214,185,0.16)] p-6 space-y-5"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <span class="text-xs font-semibold text-amberGlow">تحديث بيانات الطاولة</span>
+          <h3 id="table-modal-title" class="font-display font-bold text-xl text-chalk mt-0.5"></h3>
+        </div>
+        <button
+          id="close-table-modal-btn"
+          type="button"
+          aria-label="إغلاق نافذة الطاولة"
+          class="min-w-[40px] min-h-[40px] rounded-xl bg-stoneMatte text-ash hover:text-chalk cursor-pointer"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form id="table-edit-form" class="space-y-4">
+        <input type="hidden" id="modal-table-id" />
+
+        <div>
+          <label for="modal-table-status" class="block text-sm font-medium text-chalk mb-1.5">
+            حالة الطاولة
+          </label>
+          <select
+            id="modal-table-status"
+            class="w-full min-h-[44px] px-4 rounded-2xl bg-stoneMatte border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+          >
+            <option value="متاحة">متاحة</option>
+            <option value="محجوزة">محجوزة</option>
+            <option value="مشغولة">مشغولة</option>
+            <option value="صيانة">صيانة</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="modal-table-guest" class="block text-sm font-medium text-chalk mb-1.5">
+            اسم الضيف الحالي أو الحجز
+          </label>
+          <input
+            id="modal-table-guest"
+            type="text"
+            placeholder="اتركه فارغاً إذا كانت الطاولة متاحة"
+            class="w-full min-h-[44px] px-4 rounded-2xl bg-stoneMatte border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="modal-table-order" class="block text-sm font-medium text-chalk mb-1.5">
+            رقم الطلب النشط (اختياري)
+          </label>
+          <input
+            id="modal-table-order"
+            type="text"
+            placeholder="مثال: ORD-104"
+            class="w-full min-h-[44px] px-4 rounded-2xl bg-stoneMatte border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="modal-table-note" class="block text-sm font-medium text-chalk mb-1.5">
+            ملاحظة تشغيلية
+          </label>
+          <input
+            id="modal-table-note"
+            type="text"
+            placeholder="مثال: ركن هادئ قرب نافذة الرواق"
+            class="w-full min-h-[44px] px-4 rounded-2xl bg-stoneMatte border border-[rgba(235,214,185,0.14)] text-chalk text-sm"
+          />
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button
+            id="cancel-table-modal-btn"
+            type="button"
+            class="min-h-[42px] px-4 rounded-2xl bg-stoneMatte text-sm text-ash hover:text-chalk cursor-pointer"
+          >
+            إلغاء
+          </button>
+          <button
+            type="submit"
+            class="min-h-[42px] px-5 rounded-2xl bg-amberGlow text-amberInk font-semibold text-sm hover:brightness-105 cursor-pointer"
+          >
+            حفظ حالة الطاولة
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       البرمجيات المعمارية للوحة التحكم
+       ===================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'bahr_cafe_admin_state_v1';
+      const CHANNEL_NAME = 'bahr_cafe_admin_sync_v1';
+
+      const SHAPE_LABELS = {
+        classic: 'كلاسيكي',
+        angled: 'زاوية مائلة',
+        'soft-frame': 'إطار ناعم',
+        panorama: 'بانوراما',
+        vertical: 'عمودي',
+      };
+
+      const ORDER_STATUSES = ['قيد التحضير', 'جاهز', 'مكتمل', 'ملغي'];
+      const TABLE_STATUSES = ['متاحة', 'محجوزة', 'مشغولة', 'صيانة'];
+
+      const DEFAULT_STATE = {
+        activeSection: 'orders-menu',
+        orderFilter: 'all',
+        reservationFilter: 'all',
+        tableFilter: 'all',
+        manualReducedMotion: false,
+        orders: [
+          {
+            id: 'ORD-104',
+            customerName: 'سارة المنصور',
+            tableLabel: 'طاولة 02',
+            itemsSummary: '2× لاتيه الهيل والخشب المدخن، 1× بريوش الزبدة والسمسم',
+            totalIQD: 19000,
+            status: 'قيد التحضير',
+            createdAt: 'منذ 7 دقائق',
+            notes: 'حليب شوفان وسكر خفيف',
+          },
+          {
+            id: 'ORD-105',
+            customerName: 'مصطفى الكاظمي',
+            tableLabel: 'طاولة 05',
+            itemsSummary: '1× قهوة مقطرة V60 — نسيم الشفق، 1× تارت التمر وجوز البقان',
+            totalIQD: 13000,
+            status: 'جاهز',
+            createdAt: 'منذ 14 دقيقة',
+            notes: 'تقديم مع كوب ماء بارد',
+          },
+          {
+            id: 'ORD-106',
+            customerName: 'نور الهدى',
+            tableLabel: 'طلب سفري',
+            itemsSummary: '2× كورتادو الكهرمان الرملي',
+            totalIQD: 12000,
+            status: 'مكتمل',
+            createdAt: 'منذ 32 دقيقة',
+            notes: '',
+          },
+          {
+            id: 'ORD-107',
+            customerName: 'زيد العزاوي',
+            tableLabel: 'طاولة 01',
+            itemsSummary: '1× إسبرسو رواق بحر',
+            totalIQD: 4500,
+            status: 'ملغي',
+            createdAt: 'منذ 45 دقيقة',
+            notes: 'ألغى الضيف الطلب قبل التحضير',
+          },
+        ],
+        menuItems: [
+          {
+            id: 'itm-1',
+            name: 'إسبرسو رواق بحر',
+            price: 4500,
+            category: 'إسبرسو ومقطر',
+            available: true,
+            shape: 'classic',
+            description: 'تحميص متوازن بإيحاءات الكاكاو الدافئ والتين المجفف.',
+            image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=900&q=80',
+          },
+          {
+            id: 'itm-2',
+            name: 'قهوة مقطرة V60 — نسيم الشفق',
+            price: 6500,
+            category: 'إسبرسو ومقطر',
+            available: true,
+            shape: 'soft-frame',
+            description: 'تقطير يدوي هادئ يبرز النقاء ولمسة الكراميل الخفيفة.',
+            image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80',
+          },
+          {
+            id: 'itm-3',
+            name: 'لاتيه الهيل والخشب المدخن',
+            price: 7000,
+            category: 'مشروبات بحر الخاصة',
+            available: true,
+            shape: 'angled',
+            description: 'دفء الهيل العطري مع نعومة الحليب ولمسة فانيلا طبيعية.',
+            image: 'https://images.unsplash.com/photo-1541167760496-0c8aa3b9284b?auto=format&fit=crop&w=900&q=80',
+          },
+          {
+            id: 'itm-4',
+            name: 'بريوش الزبدة والسمسم المحمص',
+            price: 5000,
+            category: 'مخبوزات دافئة',
+            available: false,
+            shape: 'panorama',
+            description: 'مخبوز بحرارة لطيفة بقوام هشة يناسب القهوة المسائية.',
+            image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80',
+          },
+        ],
+        reservations: [
+          {
+            id: 'RES-201',
+            guestName: 'حيدر الربيعي',
+            phone: '0770 412 8890',
+            partySize: 4,
+            tableId: 'TBL-03',
+            tableNumber: 'طاولة 03',
+            timeSlot: 'اليوم • 20:30',
+            status: 'pending',
+            notes: 'جلسة مسائية هادئة بجانب الإضاءة الدافئة',
+            decisionNote: '',
+          },
+          {
+            id: 'RES-202',
+            guestName: 'مريم السامرائي',
+            phone: '0781 904 3321',
+            partySize: 2,
+            tableId: 'TBL-04',
+            tableNumber: 'طاولة 04',
+            timeSlot: 'اليوم • 21:15',
+            status: 'pending',
+            notes: 'قراءة وقهوة مقطرة',
+            decisionNote: '',
+          },
+          {
+            id: 'RES-203',
+            guestName: 'علي الخفاجي',
+            phone: '0750 661 2094',
+            partySize: 6,
+            tableId: 'TBL-06',
+            tableNumber: 'طاولة 06',
+            timeSlot: 'اليوم • 19:00',
+            status: 'accepted',
+            notes: 'اجتماع عمل خفيف',
+            decisionNote: 'تم تجهيز الطاولة الرئيسية للرواق',
+          },
+          {
+            id: 'RES-204',
+            guestName: 'رنا التميمي',
+            phone: '0772 319 7740',
+            partySize: 2,
+            tableId: 'TBL-01',
+            tableNumber: 'طاولة 01',
+            timeSlot: 'اليوم • 18:00',
+            status: 'rejected',
+            notes: 'طلب طاولة في الساعة 18:00',
+            decisionNote: 'الطاولة كانت مشغولة في الفترة المحددة',
+          },
+        ],
+        tables: [
+          {
+            id: 'TBL-01',
+            number: 'طاولة 01',
+            zone: 'ركن المدخل الهادئ',
+            capacity: 2,
+            status: 'متاحة',
+            guestName: '',
+            orderId: '',
+            note: 'إضاءة شفق خافتة',
+          },
+          {
+            id: 'TBL-02',
+            number: 'طاولة 02',
+            zone: 'رواق القهوة الوسطي',
+            capacity: 4,
+            status: 'مشغولة',
+            guestName: 'سارة المنصور',
+            orderId: 'ORD-104',
+            note: 'طلب قيد التحضير',
+          },
+          {
+            id: 'TBL-03',
+            number: 'طاولة 03',
+            zone: 'زاوية الخشب المدخن',
+            capacity: 4,
+            status: 'متاحة',
+            guestName: '',
+            orderId: '',
+            note: 'مناسبة لجلسات 3-4 ضيوف',
+          },
+          {
+            id: 'TBL-04',
+            number: 'طاولة 04',
+            zone: 'شرفة الرواق الداخلية',
+            capacity: 2,
+            status: 'متاحة',
+            guestName: '',
+            orderId: '',
+            note: 'ركن قراءة هادئ',
+          },
+          {
+            id: 'TBL-05',
+            number: 'طاولة 05',
+            zone: 'قرب بار التقطير',
+            capacity: 2,
+            status: 'مشغولة',
+            guestName: 'مصطفى الكاظمي',
+            orderId: 'ORD-105',
+            note: 'الطلب جاهز للتقديم',
+          },
+          {
+            id: 'TBL-06',
+            number: 'طاولة 06',
+            zone: 'جلسة الرواق العائلية',
+            capacity: 6,
+            status: 'محجوزة',
+            guestName: 'علي الخفاجي',
+            orderId: '',
+            note: 'حجز مؤكد الساعة 19:00',
+          },
+          {
+            id: 'TBL-07',
+            number: 'طاولة 07',
+            zone: 'الركن الجانبي المظلل',
+            capacity: 4,
+            status: 'صيانة',
+            guestName: '',
+            orderId: '',
+            note: 'إعادة ضبط الإنارة الجانبية',
+          },
+        ],
+      };
+
+      function cloneDefault() {
+        return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return cloneDefault();
+          const parsed = JSON.parse(raw);
+          return {
+            ...cloneDefault(),
+            ...parsed,
+            orders: Array.isArray(parsed.orders) ? parsed.orders : cloneDefault().orders,
+            menuItems: Array.isArray(parsed.menuItems) ? parsed.menuItems : cloneDefault().menuItems,
+            reservations: Array.isArray(parsed.reservations)
+              ? parsed.reservations
+              : cloneDefault().reservations,
+            tables: Array.isArray(parsed.tables) ? parsed.tables : cloneDefault().tables,
+          };
+        } catch (_err) {
+          return cloneDefault();
+        }
+      }
+
+      let state = loadState();
+      let syncChannel = null;
+
+      try {
+        if ('BroadcastChannel' in window) {
+          syncChannel = new BroadcastChannel(CHANNEL_NAME);
+          syncChannel.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'STATE_UPDATED' && event.data.payload) {
+              state = { ...cloneDefault(), ...event.data.payload };
+              renderAll();
+            }
+          });
+        }
+      } catch (_err) {
+        syncChannel = null;
+      }
+
+      function saveState(broadcast = true) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (_err) {
+          // تجاهل أخطاء التخزين في أوضاع التصفح المقيدة
+        }
+        if (broadcast && syncChannel) {
+          try {
+            syncChannel.postMessage({ type: 'STATE_UPDATED', payload: state });
+          } catch (_err) {
+            // تجاهل خطأ الإرسال إن وجد
+          }
+        }
+      }
+
+      function formatIQD(num) {
+        return `${Number(num || 0).toLocaleString('ar-IQ')} د.ع`;
+      }
+
+      function isReducedMotion() {
+        const sysPref = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        return Boolean(state.manualReducedMotion || sysPref);
+      }
+
+      /* -------------------------------------------------------------------
+         محرك ضبابية الحركة الموجهة حسب السرعة (Motion Blur)
+         ------------------------------------------------------------------- */
+      const sheetEl = document.getElementById('table-modal-sheet');
+      const sheetBlurNode = document.getElementById('admin-sheet-blur-node');
+      const toastEl = document.getElementById('live-toast');
+      const toastTextEl = document.getElementById('live-toast-text');
+      const toastBlurNode = document.getElementById('admin-toast-blur-node');
+      const dismissToastBtn = document.getElementById('dismiss-toast-btn');
+
+      function createBlurController(targetEl, filterId, blurPrimitive, maxX, maxY) {
+        let stdX = 0;
+        let stdY = 0;
+        let rafId = null;
+
+        function reset() {
+          stdX = 0;
+          stdY = 0;
+          if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+          if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', '0 0');
+          if (targetEl) targetEl.style.filter = 'none';
+        }
+
+        function decay() {
+          rafId = null;
+          if (isReducedMotion()) {
+            reset();
+            return;
+          }
+          stdX *= 0.72;
+          stdY *= 0.72;
+          if (stdX < 0.04 && stdY < 0.04) {
+            reset();
+            return;
+          }
+          const cx = Math.min(maxX, stdX).toFixed(2);
+          const cy = Math.min(maxY, stdY).toFixed(2);
+          if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${cx} ${cy}`);
+          if (targetEl) targetEl.style.filter = `url(#${filterId})`;
+          rafId = requestAnimationFrame(decay);
+        }
+
+        function pulse(dx, dy, durationMs) {
+          if (isReducedMotion() || !targetEl || !blurPrimitive) return;
+          const factor = Math.max(0.3, durationMs / 320);
+          stdX = Math.max(stdX, Math.min(maxX, (Math.abs(dx) / 120) * factor));
+          stdY = Math.max(stdY, Math.min(maxY, (Math.abs(dy) / 120) * factor));
+          blurPrimitive.setAttribute('stdDeviation', `${stdX.toFixed(2)} ${stdY.toFixed(2)}`);
+          targetEl.style.filter = `url(#${filterId})`;
+          if (rafId === null) rafId = requestAnimationFrame(decay);
+        }
+
+        return { pulse, reset };
+      }
+
+      const sheetBlur = createBlurController(sheetEl, 'admin-sheet-blur', sheetBlurNode, 1.8, 1.8);
+      const toastBlur = createBlurController(toastEl, 'admin-toast-blur', toastBlurNode, 1.4, 1.4);
+      let toastTimer = null;
+
+      function showToast(message) {
+        toastTextEl.textContent = message;
+        toastEl.classList.remove('hidden');
+        if (!isReducedMotion()) {
+          toastBlur.pulse(0, 12, 280);
+        } else {
+          toastBlur.reset();
+        }
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.add('hidden');
+          toastBlur.reset();
+        }, 3800);
+      }
+
+      dismissToastBtn.addEventListener('click', () => {
+        toastEl.classList.add('hidden');
+        toastBlur.reset();
+      });
+
+      /* -------------------------------------------------------------------
+         التنقل بين الأقسام الثلاثة ووضع الحركة
+         ------------------------------------------------------------------- */
+      const sectionTabs = document.querySelectorAll('.section-tab');
+      const sectionMap = {
+        'orders-menu': document.getElementById('section-orders-menu'),
+        reservations: document.getElementById('section-reservations'),
+        tables: document.getElementById('section-tables'),
+      };
+
+      function applySectionTabUI() {
+        sectionTabs.forEach((tab) => {
+          const target = tab.getAttribute('data-section-tab');
+          const active = target === state.activeSection;
+          tab.setAttribute('aria-selected', String(active));
+          tab.className = active
+            ? 'section-tab min-h-[42px] px-4 rounded-xl text-xs sm:text-sm font-semibold bg-amberGlow text-amberInk whitespace-nowrap cursor-pointer transition-colors'
+            : 'section-tab min-h-[42px] px-4 rounded-xl text-xs sm:text-sm font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] whitespace-nowrap cursor-pointer transition-colors';
+        });
+      }
+
+      sectionTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const targetKey = tab.getAttribute('data-section-tab');
+          state.activeSection = targetKey;
+          applySectionTabUI();
+          saveState(true);
+          const el = sectionMap[targetKey];
+          if (el) {
+            el.scrollIntoView({ behavior: isReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      const motionModeBtn = document.getElementById('motion-mode-btn');
+      const motionModeLabel = document.getElementById('motion-mode-label');
+
+      function syncMotionUI() {
+        const reduced = isReducedMotion();
+        document.documentElement.classList.toggle('reduced-motion-active', state.manualReducedMotion);
+        motionModeBtn.setAttribute('aria-pressed', String(state.manualReducedMotion));
+        if (reduced) {
+          motionModeLabel.textContent = 'حركة مخففة نشطة';
+          sheetBlur.reset();
+          toastBlur.reset();
+          document.querySelectorAll('.reveal-panel').forEach((p) => p.classList.add('is-visible'));
+        } else {
+          motionModeLabel.textContent = 'حركة سلسة + ضبابية خفيفة';
+        }
+      }
+
+      motionModeBtn.addEventListener('click', () => {
+        state.manualReducedMotion = !state.manualReducedMotion;
+        syncMotionUI();
+        saveState(true);
+        showToast(
+          state.manualReducedMotion
+            ? 'تم تفعيل وضع تقليل الحركة لراحة إضافية للعين.'
+            : 'تمت استعادة الحركة السلسة مع ضبابية الحركة الخفيفة.'
+        );
+      });
+
+      /* -------------------------------------------------------------------
+         تحديث المؤشرات العلوية
+         ------------------------------------------------------------------- */
+      function renderKPIs() {
+        const activeOrders = state.orders.filter(
+          (o) => o.status === 'قيد التحضير' || o.status === 'جاهز'
+        ).length;
+        const availableMenu = state.menuItems.filter((m) => m.available).length;
+        const pendingRes = state.reservations.filter((r) => r.status === 'pending').length;
+        const freeTables = state.tables.filter((t) => t.status === 'متاحة').length;
+
+        document.getElementById('kpi-active-orders').textContent = String(activeOrders);
+        document.getElementById('kpi-available-menu').textContent = String(availableMenu);
+        document.getElementById('kpi-total-menu-sub').textContent = `من أصل ${state.menuItems.length} عنصر`;
+        document.getElementById('kpi-pending-res').textContent = String(pendingRes);
+        document.getElementById('pending-reservations-pill').textContent = String(pendingRes);
+        document.getElementById('kpi-free-tables').textContent = String(freeTables);
+        document.getElementById('kpi-total-tables-sub').textContent = `من أصل ${state.tables.length} طاولة`;
+      }
+
+      /* -------------------------------------------------------------------
+         القسم الأول أ: إدارة الطلبات وتغيير حالتها
+         ------------------------------------------------------------------- */
+      const ordersListEl = document.getElementById('orders-list-container');
+      const orderFilterBtns = document.querySelectorAll('.order-filter-btn');
+
+      function orderBadgeStyle(status) {
+        switch (status) {
+          case 'قيد التحضير':
+            return 'bg-ochre/20 text-ochre border-ochre/35';
+          case 'جاهز':
+            return 'bg-sage/20 text-sage border-sage/35';
+          case 'مكتمل':
+            return 'bg-slateBlue/20 text-slateBlue border-slateBlue/35';
+          case 'ملغي':
+            return 'bg-roseMuted/20 text-roseMuted border-roseMuted/35';
+          default:
+            return 'bg-stoneRaised text-ash border-[rgba(235,214,185,0.14)]';
+        }
+      }
+
+      function syncOrderFilterUI() {
+        orderFilterBtns.forEach((btn) => {
+          const active = btn.getAttribute('data-order-filter') === state.orderFilter;
+          btn.className = active
+            ? 'order-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-semibold bg-amberGlow text-amberInk cursor-pointer'
+            : 'order-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer';
+        });
+      }
+
+      orderFilterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.orderFilter = btn.getAttribute('data-order-filter');
+          syncOrderFilterUI();
+          renderOrders();
+          saveState(true);
+        });
+      });
+
+      function renderOrders() {
+        syncOrderFilterUI();
+        const list =
+          state.orderFilter === 'all'
+            ? state.orders
+            : state.orders.filter((o) => o.status === state.orderFilter);
+
+        ordersListEl.innerHTML = '';
+
+        if (list.length === 0) {
+          ordersListEl.innerHTML = `
+            <div class="col-span-full rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.1)] p-6 text-center text-sm text-ash">
+              لا توجد طلبات ضمن التصفية المحددة حالياً.
+            </div>
+          `;
+          return;
+        }
+
+        list.forEach((order) => {
+          const card = document.createElement('article');
+          card.className =
+            'rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.12)] p-4 sm:p-5 flex flex-col justify-between gap-4';
+
+          const statusOptionsHtml = ORDER_STATUSES.map(
+            (st) =>
+              `<option value="${st}" ${order.status === st ? 'selected' : ''}>${st}</option>`
+          ).join('');
+
+          card.innerHTML = `
+            <div class="space-y-2">
+              <div class="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-display font-bold text-base text-chalk">${order.id}</span>
+                    <span class="text-xs text-ash">• ${order.tableLabel}</span>
+                    <span class="text-xs text-ash">• ${order.createdAt}</span>
+                  </div>
+                  <p class="text-sm font-semibold text-chalk mt-0.5">${order.customerName}</p>
+                </div>
+
+                <span class="px-3 py-1 rounded-full text-xs font-semibold border ${orderBadgeStyle(order.status)}">
+                  ${order.status}
+                </span>
+              </div>
+
+              <p class="text-sm text-chalk/90 leading-relaxed">${order.itemsSummary}</p>
+              ${
+                order.notes
+                  ? `<p class="text-xs text-amberGlow">ملاحظة: ${order.notes}</p>`
+                  : ''
+              }
+            </div>
+
+            <div class="pt-3 border-t border-[rgba(235,214,185,0.09)] flex flex-wrap items-center justify-between gap-3">
+              <span class="font-display font-bold text-sm text-amberGlow">${formatIQD(order.totalIQD)}</span>
+
+              <div class="flex items-center gap-2">
+                <label for="order-status-${order.id}" class="text-xs text-ash">تغيير الحالة:</label>
+                <select
+                  id="order-status-${order.id}"
+                  data-order-id="${order.id}"
+                  class="order-status-select min-h-[38px] px-3 rounded-xl bg-stoneMatte border border-[rgba(235,214,185,0.16)] text-xs font-semibold text-chalk cursor-pointer"
+                >
+                  ${statusOptionsHtml}
+                </select>
+              </div>
+            </div>
+          `;
+
+          const selectEl = card.querySelector('.order-status-select');
+          selectEl.addEventListener('change', (e) => {
+            const nextStatus = e.target.value;
+            const target = state.orders.find((o) => o.id === order.id);
+            if (target) {
+              target.status = nextStatus;
+              saveState(true);
+              renderOrders();
+              renderKPIs();
+              showToast(`تم تحديث حالة الطلب ${order.id} إلى «${nextStatus}».`);
+            }
+          });
+
+          ordersListEl.appendChild(card);
+        });
+      }
+
+      /* -------------------------------------------------------------------
+         القسم الأول ب: إضافة وتعديل عناصر المنيو مع اختيار الشكل والمعاينة
+         ------------------------------------------------------------------- */
+      const menuForm = document.getElementById('menu-editor-form');
+      const menuFormHeading = document.getElementById('menu-form-heading');
+      const cancelMenuEditBtn = document.getElementById('cancel-menu-edit-btn');
+      const menuEditIdInput = document.getElementById('menu-edit-id');
+      const menuNameInput = document.getElementById('menu-item-name');
+      const menuPriceInput = document.getElementById('menu-item-price');
+      const menuCategoryInput = document.getElementById('menu-item-category');
+      const menuShapeInput = document.getElementById('menu-item-shape');
+      const menuAvailableInput = document.getElementById('menu-item-available');
+      const menuImageInput = document.getElementById('menu-item-image');
+      const menuDescInput = document.getElementById('menu-item-desc');
+
+      const previewImgEl = document.getElementById('menu-live-preview-img');
+      const previewCatEl = document.getElementById('menu-live-preview-cat');
+      const previewNameEl = document.getElementById('menu-live-preview-name');
+      const previewPriceEl = document.getElementById('menu-live-preview-price');
+      const previewDescEl = document.getElementById('menu-live-preview-desc');
+      const previewAvailBadge = document.getElementById('preview-availability-badge');
+      const menuItemsListEl = document.getElementById('menu-items-list');
+
+      const DEFAULT_MENU_IMG =
+        'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=900&q=80';
+      const FALLBACK_MENU_IMG =
+        'https://placehold.co/800x500/1d1916/efe6d8?text=%D9%83%D8%A7%D9%81%D9%8A%D9%87+%D8%A8%D8%AD%D8%B1';
+
+      function syncMenuLivePreview() {
+        const nameVal = menuNameInput.value.trim() || 'لاتيه الهيل والزعفران';
+        const priceVal = Number(menuPriceInput.value) || 6500;
+        const catVal = menuCategoryInput.value;
+        const shapeVal = menuShapeInput.value || 'classic';
+        const isAvail = menuAvailableInput.value === 'true';
+        const imgUrl = menuImageInput.value.trim() || DEFAULT_MENU_IMG;
+        const descVal =
+          menuDescInput.value.trim() ||
+          'اكتب وصفاً واضحاً يبرز قوام المشروب أو المخبوز وإيحاءاته...';
+
+        previewNameEl.textContent = nameVal;
+        previewPriceEl.textContent = formatIQD(priceVal);
+        previewCatEl.textContent = `${catVal} • شكل: ${SHAPE_LABELS[shapeVal] || 'كلاسيكي'}`;
+        previewDescEl.textContent = descVal;
+
+        previewImgEl.className = `shape-${shapeVal} w-full h-full object-cover transition-all duration-300`;
+        if (previewImgEl.src !== imgUrl) {
+          previewImgEl.src = imgUrl;
+        }
+
+        if (isAvail) {
+          previewAvailBadge.textContent = 'متاح للطلب';
+          previewAvailBadge.className =
+            'px-2.5 py-1 rounded-full text-xs font-semibold bg-sage/20 text-sage';
+        } else {
+          previewAvailBadge.textContent = 'غير متوفر حالياً';
+          previewAvailBadge.className =
+            'px-2.5 py-1 rounded-full text-xs font-semibold bg-roseMuted/20 text-roseMuted';
+        }
+      }
+
+      [
+        menuNameInput,
+        menuPriceInput,
+        menuCategoryInput,
+        menuShapeInput,
+        menuAvailableInput,
+        menuImageInput,
+        menuDescInput,
+      ].forEach((el) => {
+        el.addEventListener('input', syncMenuLivePreview);
+        el.addEventListener('change', syncMenuLivePreview);
+      });
+
+      function resetMenuForm() {
+        menuEditIdInput.value = '';
+        menuForm.reset();
+        menuPriceInput.value = '6500';
+        menuShapeInput.value = 'classic';
+        menuAvailableInput.value = 'true';
+        menuFormHeading.textContent = 'إضافة عنصر جديد إلى المنيو';
+        cancelMenuEditBtn.classList.add('hidden');
+        syncMenuLivePreview();
+      }
+
+      cancelMenuEditBtn.addEventListener('click', resetMenuForm);
+
+      function startEditMenuItem(item) {
+        menuEditIdInput.value = item.id;
+        menuNameInput.value = item.name;
+        menuPriceInput.value = String(item.price);
+        menuCategoryInput.value = item.category;
+        menuShapeInput.value = item.shape || 'classic';
+        menuAvailableInput.value = String(item.available);
+        menuImageInput.value = item.image || '';
+        menuDescInput.value = item.description || '';
+        menuFormHeading.textContent = `تعديل العنصر: ${item.name}`;
+        cancelMenuEditBtn.classList.remove('hidden');
+        syncMenuLivePreview();
+        menuNameInput.focus();
+      }
+
+      menuForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = menuNameInput.value.trim();
+        const price = Number(menuPriceInput.value);
+        const category = menuCategoryInput.value;
+        const shape = menuShapeInput.value;
+        const available = menuAvailableInput.value === 'true';
+        const image = menuImageInput.value.trim() || DEFAULT_MENU_IMG;
+        const description = menuDescInput.value.trim();
+
+        if (!name || !price || price <= 0 || !description) {
+          showToast('يرجى إدخال اسم الصنف والسعر والوصف بشكل صحيح.');
+          return;
+        }
+
+        const editingId = menuEditIdInput.value.trim();
+        if (editingId) {
+          const idx = state.menuItems.findIndex((m) => m.id === editingId);
+          if (idx !== -1) {
+            state.menuItems[idx] = {
+              ...state.menuItems[idx],
+              name,
+              price,
+              category,
+              shape,
+              available,
+              image,
+              description,
+            };
+            showToast(`تم تحديث عنصر المنيو «${name}».`);
+          }
+        } else {
+          state.menuItems.unshift({
+            id: `itm-${Date.now()}`,
+            name,
+            price,
+            category,
+            shape,
+            available,
+            image,
+            description,
+          });
+          showToast(`تمت إضافة «${name}» إلى المنيو.`);
+        }
+
+        saveState(true);
+        resetMenuForm();
+        renderMenuItems();
+        renderKPIs();
+      });
+
+      function renderMenuItems() {
+        menuItemsListEl.innerHTML = '';
+
+        state.menuItems.forEach((item) => {
+          const card = document.createElement('article');
+          card.className =
+            'rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.12)] p-4 flex flex-col justify-between gap-4';
+
+          const shapeClass = `shape-${item.shape || 'classic'}`;
+
+          card.innerHTML = `
+            <div class="space-y-3">
+              <div class="h-36 w-full overflow-hidden bg-stoneMatte rounded-2xl">
+                <img
+                  src="${item.image || DEFAULT_MENU_IMG}"
+                  alt="${item.name}"
+                  loading="lazy"
+                  class="${shapeClass} w-full h-full object-cover"
+                  onerror="this.onerror=null;this.src='${FALLBACK_MENU_IMG}';"
+                />
+              </div>
+
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <span class="text-xs text-ash">${item.category} • ${SHAPE_LABELS[item.shape] || 'كلاسيكي'}</span>
+                  <h4 class="font-display font-bold text-base text-chalk mt-0.5">${item.name}</h4>
+                </div>
+                <span class="font-display font-bold text-sm text-amberGlow shrink-0">${formatIQD(item.price)}</span>
+              </div>
+
+              <p class="text-xs sm:text-sm text-ash leading-relaxed">${item.description}</p>
+            </div>
+
+            <div class="pt-3 border-t border-[rgba(235,214,185,0.09)] flex items-center justify-between gap-2 flex-wrap">
+              <button
+                type="button"
+                data-toggle-avail="${item.id}"
+                class="min-h-[36px] px-3 rounded-xl text-xs font-semibold cursor-pointer ${
+                  item.available
+                    ? 'bg-sage/20 text-sage border border-sage/35'
+                    : 'bg-roseMuted/20 text-roseMuted border border-roseMuted/35'
+                }"
+              >
+                ${item.available ? 'متاح' : 'غير متوفر'}
+              </button>
+
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  data-edit-menu="${item.id}"
+                  class="min-h-[36px] px-3 rounded-xl bg-stoneMatte border border-[rgba(235,214,185,0.15)] text-xs text-chalk hover:border-amberGlow/45 cursor-pointer"
+                >
+                  تعديل
+                </button>
+                <button
+                  type="button"
+                  data-delete-menu="${item.id}"
+                  class="min-h-[36px] px-3 rounded-xl bg-stoneMatte border border-roseMuted/30 text-xs text-roseMuted hover:text-chalk cursor-pointer"
+                >
+                  حذف
+                </button>
+              </div>
+            </div>
+          `;
+
+          card.querySelector('[data-toggle-avail]').addEventListener('click', () => {
+            item.available = !item.available;
+            saveState(true);
+            renderMenuItems();
+            renderKPIs();
+            showToast(
+              `تم تغيير توفر «${item.name}» إلى ${item.available ? 'متاح' : 'غير متوفر'}.`
+            );
+          });
+
+          card.querySelector('[data-edit-menu]').addEventListener('click', () => {
+            startEditMenuItem(item);
+          });
+
+          card.querySelector('[data-delete-menu]').addEventListener('click', () => {
+            state.menuItems = state.menuItems.filter((m) => m.id !== item.id);
+            saveState(true);
+            renderMenuItems();
+            renderKPIs();
+            showToast(`تم حذف «${item.name}» من المنيو.`);
+          });
+
+          menuItemsListEl.appendChild(card);
+        });
+      }
+
+      /* -------------------------------------------------------------------
+         القسم الثاني: موافقة ورفض حجوزات الطاولات
+         ------------------------------------------------------------------- */
+      const reservationsEl = document.getElementById('reservations-container');
+      const resFilterBtns = document.querySelectorAll('.res-filter-btn');
+
+      function syncResFilterUI() {
+        resFilterBtns.forEach((btn) => {
+          const active = btn.getAttribute('data-res-filter') === state.reservationFilter;
+          btn.className = active
+            ? 'res-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-semibold bg-amberGlow text-amberInk cursor-pointer'
+            : 'res-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer';
+        });
+      }
+
+      resFilterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.reservationFilter = btn.getAttribute('data-res-filter');
+          syncResFilterUI();
+          renderReservations();
+          saveState(true);
+        });
+      });
+
+      function resBadgeInfo(status) {
+        if (status === 'accepted') {
+          return { text: 'مقبول', cls: 'bg-sage/20 text-sage border-sage/35' };
+        }
+        if (status === 'rejected') {
+          return { text: 'مرفوض', cls: 'bg-roseMuted/20 text-roseMuted border-roseMuted/35' };
+        }
+        return { text: 'بانتظار القرار', cls: 'bg-ochre/20 text-ochre border-ochre/35' };
+      }
+
+      function renderReservations() {
+        syncResFilterUI();
+        const items =
+          state.reservationFilter === 'all'
+            ? state.reservations
+            : state.reservations.filter((r) => r.status === state.reservationFilter);
+
+        reservationsEl.innerHTML = '';
+
+        if (items.length === 0) {
+          reservationsEl.innerHTML = `
+            <div class="col-span-full rounded-2xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-6 text-center text-sm text-ash">
+              لا توجد حجوزات مطابقة للتصنيف المحدد.
+            </div>
+          `;
+          return;
+        }
+
+        items.forEach((res) => {
+          const badge = resBadgeInfo(res.status);
+          const card = document.createElement('article');
+          card.className =
+            'rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5 sm:p-6 space-y-4';
+
+          const tableOptionsHtml = state.tables
+            .map(
+              (t) =>
+                `<option value="${t.id}" ${res.tableId === t.id ? 'selected' : ''}>${t.number} (${t.capacity} مقاعد — ${t.status})</option>`
+            )
+            .join('');
+
+          card.innerHTML = `
+            <div class="flex items-start justify-between gap-3 flex-wrap">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-display font-bold text-base text-chalk">${res.guestName}</span>
+                  <span class="text-xs text-ash">• ${res.id}</span>
+                </div>
+                <p class="text-xs sm:text-sm text-ash mt-0.5">${res.phone} • ${res.partySize} ضيوف • ${res.timeSlot}</p>
+              </div>
+
+              <span class="px-3 py-1 rounded-full text-xs font-semibold border ${badge.cls}">
+                ${badge.text}
+              </span>
+            </div>
+
+            ${
+              res.notes
+                ? `<p class="text-xs sm:text-sm text-chalk/85 bg-stoneRaised rounded-xl px-3.5 py-2.5 border border-[rgba(235,214,185,0.08)]">طلب الضيف: ${res.notes}</p>`
+                : ''
+            }
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="res-table-${res.id}" class="block text-xs text-ash mb-1">تخصيص الطاولة</label>
+                <select
+                  id="res-table-${res.id}"
+                  data-res-table="${res.id}"
+                  class="w-full min-h-[40px] px-3 rounded-xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-xs text-chalk"
+                >
+                  ${tableOptionsHtml}
+                </select>
+              </div>
+
+              <div>
+                <label for="res-note-${res.id}" class="block text-xs text-ash mb-1">ملاحظة أو سبب القرار</label>
+                <input
+                  id="res-note-${res.id}"
+                  type="text"
+                  value="${res.decisionNote || ''}"
+                  placeholder="سبب الرفض أو تأكيد التجهيز..."
+                  class="w-full min-h-[40px] px-3 rounded-xl bg-stoneRaised border border-[rgba(235,214,185,0.14)] text-xs text-chalk"
+                />
+              </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2.5 flex-wrap">
+              <button
+                type="button"
+                data-reject-res="${res.id}"
+                class="min-h-[40px] px-4 rounded-xl bg-roseMuted/15 border border-roseMuted/40 text-roseMuted hover:bg-roseMuted hover:text-amberInk text-xs font-semibold transition-colors cursor-pointer"
+              >
+                رفض الحجز
+              </button>
+              <button
+                type="button"
+                data-accept-res="${res.id}"
+                class="min-h-[40px] px-5 rounded-xl bg-sage text-amberInk hover:brightness-105 text-xs font-bold transition-all cursor-pointer"
+              >
+                قبول الحجز وتحديث الطاولة
+              </button>
+            </div>
+          `;
+
+          const tableSelectEl = card.querySelector(`[data-res-table="${res.id}"]`);
+          const noteInputEl = card.querySelector(`#res-note-${res.id}`);
+
+          card.querySelector(`[data-accept-res="${res.id}"]`).addEventListener('click', () => {
+            const chosenTableId = tableSelectEl.value;
+            const chosenTable = state.tables.find((t) => t.id === chosenTableId);
+            res.tableId = chosenTableId;
+            res.tableNumber = chosenTable ? chosenTable.number : res.tableNumber;
+            res.decisionNote = noteInputEl.value.trim() || 'تم اعتماد الحجز وتجهيز الطاولة';
+            res.status = 'accepted';
+
+            if (chosenTable) {
+              chosenTable.status = 'محجوزة';
+              chosenTable.guestName = res.guestName;
+              chosenTable.note = `حجز معتمد (${res.timeSlot})`;
+            }
+
+            saveState(true);
+            renderReservations();
+            renderTables();
+            renderKPIs();
+            showToast(`تم قبول حجز «${res.guestName}» وتعيين ${res.tableNumber} كمحجوزة.`);
+          });
+
+          card.querySelector(`[data-reject-res="${res.id}"]`).addEventListener('click', () => {
+            res.decisionNote = noteInputEl.value.trim() || 'تعذر توفر الجلسة في الوقت المطلوب';
+            res.status = 'rejected';
+            saveState(true);
+            renderReservations();
+            renderKPIs();
+            showToast(`تم رفض حجز «${res.guestName}».`);
+          });
+
+          reservationsEl.appendChild(card);
+        });
+      }
+
+      /* -------------------------------------------------------------------
+         القسم الثالث: تغيير حالة الطاولات وتعديل بياناتها
+         ------------------------------------------------------------------- */
+      const tablesGridEl = document.getElementById('tables-grid-container');
+      const tableFilterBtns = document.querySelectorAll('.table-filter-btn');
+
+      const tableModalBackdrop = document.getElementById('table-modal-backdrop');
+      const tableModalTitle = document.getElementById('table-modal-title');
+      const tableEditForm = document.getElementById('table-edit-form');
+      const modalTableId = document.getElementById('modal-table-id');
+      const modalTableStatus = document.getElementById('modal-table-status');
+      const modalTableGuest = document.getElementById('modal-table-guest');
+      const modalTableOrder = document.getElementById('modal-table-order');
+      const modalTableNote = document.getElementById('modal-table-note');
+      const closeTableModalBtn = document.getElementById('close-table-modal-btn');
+      const cancelTableModalBtn = document.getElementById('cancel-table-modal-btn');
+      let modalCloseTimer = null;
+
+      function syncTableFilterUI() {
+        tableFilterBtns.forEach((btn) => {
+          const active = btn.getAttribute('data-table-filter') === state.tableFilter;
+          btn.className = active
+            ? 'table-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-semibold bg-amberGlow text-amberInk cursor-pointer'
+            : 'table-filter-btn min-h-[38px] px-3.5 rounded-xl text-xs font-medium bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)] cursor-pointer';
+        });
+      }
+
+      tableFilterBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.tableFilter = btn.getAttribute('data-table-filter');
+          syncTableFilterUI();
+          renderTables();
+          saveState(true);
+        });
+      });
+
+      function tableStatusBadge(status) {
+        switch (status) {
+          case 'متاحة':
+            return 'bg-sage/20 text-sage border-sage/35';
+          case 'محجوزة':
+            return 'bg-ochre/20 text-ochre border-ochre/35';
+          case 'مشغولة':
+            return 'bg-amberGlow/20 text-amberGlow border-amberGlow/40';
+          case 'صيانة':
+            return 'bg-roseMuted/20 text-roseMuted border-roseMuted/35';
+          default:
+            return 'bg-stoneRaised text-ash border-[rgba(235,214,185,0.14)]';
+        }
+      }
+
+      function openTableModal(table) {
+        if (modalCloseTimer) {
+          clearTimeout(modalCloseTimer);
+          modalCloseTimer = null;
+        }
+        modalTableId.value = table.id;
+        tableModalTitle.textContent = `${table.number} — ${table.zone}`;
+        modalTableStatus.value = table.status;
+        modalTableGuest.value = table.guestName || '';
+        modalTableOrder.value = table.orderId || '';
+        modalTableNote.value = table.note || '';
+
+        tableModalBackdrop.classList.remove('hidden');
+        tableModalBackdrop.classList.add('flex');
+        sheetEl.classList.remove('is-closing');
+
+        if (!isReducedMotion()) {
+          sheetBlur.pulse(0, 14, 460);
+          requestAnimationFrame(() => sheetEl.classList.add('is-open'));
+        } else {
+          sheetBlur.reset();
+          sheetEl.classList.add('is-open');
+        }
+        modalTableStatus.focus();
+      }
+
+      function closeTableModal() {
+        if (modalCloseTimer) {
+          clearTimeout(modalCloseTimer);
+          modalCloseTimer = null;
+        }
+
+        const finish = () => {
+          modalCloseTimer = null;
+          sheetEl.classList.remove('is-open', 'is-closing');
+          sheetBlur.reset();
+          tableModalBackdrop.classList.add('hidden');
+          tableModalBackdrop.classList.remove('flex');
+        };
+
+        if (isReducedMotion()) {
+          finish();
+          return;
+        }
+
+        // خروج أسرع بنسبة 25% مع ضبابية حركة خفيفة
+        sheetEl.classList.remove('is-open');
+        sheetEl.classList.add('is-closing');
+        sheetBlur.pulse(0, 12, 300);
+        modalCloseTimer = setTimeout(finish, 300);
+      }
+
+      closeTableModalBtn.addEventListener('click', closeTableModal);
+      cancelTableModalBtn.addEventListener('click', closeTableModal);
+      tableModalBackdrop.addEventListener('click', (e) => {
+        if (e.target === tableModalBackdrop) closeTableModal();
+      });
+
+      tableEditForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const tbl = state.tables.find((t) => t.id === modalTableId.value);
+        if (!tbl) return;
+
+        tbl.status = modalTableStatus.value;
+        tbl.guestName = modalTableGuest.value.trim();
+        tbl.orderId = modalTableOrder.value.trim();
+        tbl.note = modalTableNote.value.trim();
+
+        if (tbl.status === 'متاحة') {
+          tbl.guestName = '';
+          tbl.orderId = '';
+        }
+
+        saveState(true);
+        renderTables();
+        renderKPIs();
+        closeTableModal();
+        showToast(`تم تحديث حالة ${tbl.number} إلى «${tbl.status}».`);
+      });
+
+      function renderTables() {
+        syncTableFilterUI();
+        const list =
+          state.tableFilter === 'all'
+            ? state.tables
+            : state.tables.filter((t) => t.status === state.tableFilter);
+
+        tablesGridEl.innerHTML = '';
+
+        list.forEach((tbl) => {
+          const card = document.createElement('article');
+          card.className =
+            'rounded-3xl bg-stoneMatte border border-[rgba(235,214,185,0.12)] p-5 flex flex-col justify-between gap-4';
+
+          const quickButtonsHtml = TABLE_STATUSES.map((st) => {
+            const isCurr = tbl.status === st;
+            return `
+              <button
+                type="button"
+                data-quick-table="${tbl.id}"
+                data-quick-status="${st}"
+                aria-pressed="${isCurr}"
+                class="min-h-[34px] px-2.5 rounded-xl text-xs font-medium cursor-pointer transition-colors ${
+                  isCurr
+                    ? 'bg-amberGlow text-amberInk font-bold'
+                    : 'bg-stoneRaised text-ash hover:text-chalk border border-[rgba(235,214,185,0.1)]'
+                }"
+              >
+                ${st}
+              </button>
+            `;
+          }).join('');
+
+          card.innerHTML = `
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <h3 class="font-display font-bold text-lg text-chalk">${tbl.number}</h3>
+                  <p class="text-xs text-ash">${tbl.zone} • سعة ${tbl.capacity} ضيوف</p>
+                </div>
+
+                <span class="px-3 py-1 rounded-full text-xs font-semibold border ${tableStatusBadge(tbl.status)}">
+                  ${tbl.status}
+                </span>
+              </div>
+
+              <div class="rounded-2xl bg-stoneRaised border border-[rgba(235,214,185,0.08)] p-3 text-xs space-y-1">
+                <p class="text-chalk/90">
+                  <span class="text-ash">الضيف:</span> ${tbl.guestName || 'لا يوجد ضيف حالياً'}
+                </p>
+                <p class="text-chalk/90">
+                  <span class="text-ash">الطلب المرتبط:</span> ${tbl.orderId || '—'}
+                </p>
+                ${
+                  tbl.note
+                    ? `<p class="text-amberGlow/95">ملاحظة: ${tbl.note}</p>`
+                    : ''
+                }
+              </div>
+
+              <div class="flex flex-wrap gap-1.5">
+                ${quickButtonsHtml}
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-[rgba(235,214,185,0.09)] flex items-center justify-end">
+              <button
+                type="button"
+                data-edit-table="${tbl.id}"
+                class="min-h-[38px] px-4 rounded-xl bg-stoneRaised border border-[rgba(235,214,185,0.15)] text-xs font-semibold text-chalk hover:border-amberGlow/45 cursor-pointer"
+              >
+                تعديل الضيف والطلب
+              </button>
+            </div>
+          `;
+
+          card.querySelectorAll('[data-quick-table]').forEach((qBtn) => {
+            qBtn.addEventListener('click', () => {
+              const nextSt = qBtn.getAttribute('data-quick-status');
+              tbl.status = nextSt;
+              if (nextSt === 'متاحة') {
+                tbl.guestName = '';
+                tbl.orderId = '';
+              }
+              saveState(true);
+              renderTables();
+              renderKPIs();
+              showToast(`تم تغيير حالة ${tbl.number} إلى «${nextSt}».`);
+            });
+          });
+
+          card.querySelector(`[data-edit-table="${tbl.id}"]`).addEventListener('click', () => {
+            openTableModal(tbl);
+          });
+
+          tablesGridEl.appendChild(card);
+        });
+      }
+
+      /* -------------------------------------------------------------------
+         تصدير JSON، استعادة البيانات الافتراضية، ومراقبة الكشف عند التمرير
+         ------------------------------------------------------------------- */
+      document.getElementById('export-json-btn').addEventListener('click', () => {
+        try {
+          const payload = JSON.stringify(
+            {
+              exportedAt: new Date().toISOString(),
+              orders: state.orders,
+              menuItems: state.menuItems,
+              reservations: state.reservations,
+              tables: state.tables,
+            },
+            null,
+            2
+          );
+          const blob = new Blob([payload], { type: 'application/json;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'bahr-cafe-admin-snapshot.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('تم تصدير لقطة بيانات لوحة التحكم بصيغة JSON.');
+        } catch (_err) {
+          showToast('تعذر إنشاء ملف التصدير في هذا المتصفح.');
+        }
+      });
+
+      document.getElementById('reset-demo-btn').addEventListener('click', () => {
+        state = cloneDefault();
+        saveState(true);
+        resetMenuForm();
+        renderAll();
+        showToast('تمت استعادة البيانات الافتراضية للطلبات والمنيو والحجوزات والطاولات.');
+      });
+
+      function initRevealObserver() {
+        const panels = document.querySelectorAll('.reveal-panel');
+        if (isReducedMotion() || !('IntersectionObserver' in window)) {
+          panels.forEach((p) => p.classList.add('is-visible'));
+          return;
+        }
+        const obs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                obs.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.08 }
+        );
+        panels.forEach((p) => obs.observe(p));
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !tableModalBackdrop.classList.contains('hidden')) {
+          closeTableModal();
+        }
+      });
+
+      function renderAll() {
+        applySectionTabUI();
+        syncMotionUI();
+        renderKPIs();
+        renderOrders();
+        renderMenuItems();
+        renderReservations();
+        renderTables();
+        syncMenuLivePreview();
+      }
+
+      renderAll();
+      initRevealObserver();
+    })();
+  </script>
+</body>
+</html>
